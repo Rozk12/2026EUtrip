@@ -260,37 +260,85 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
         </g>
       );
     case "habsburg":
-      // Habsburg double-headed imperial eagle
+      // Habsburg double-headed imperial eagle - clearer, bolder silhouette
       return (
-        <g stroke="currentColor" strokeWidth="1.1" fill="currentColor" strokeLinejoin="round">
-          {/* imperial crown on top */}
-          <rect x="-8" y="-20" width="16" height="2.5" />
-          <path d="M-8,-20 L-8,-23 L-5,-23 L-5,-20 M-2,-20 L-2,-24 L2,-24 L2,-20 M5,-20 L5,-23 L8,-23 L8,-20" fill="currentColor" />
-          <path d="M-8,-17.5 Q0,-14 8,-17.5" fill="none" strokeWidth="1.1" />
-          <circle cx="0" cy="-25.5" r="1.2" />
-          <line x1="0" y1="-24.5" x2="0" y2="-22" strokeWidth="0.9" />
+        <g fill="currentColor" stroke="currentColor" strokeLinejoin="round" strokeWidth="0.5">
+          {/* IMPERIAL CROWN with arch + orb */}
+          <g transform="translate(0,-22)">
+            <rect x="-9" y="0" width="18" height="2.5" />
+            <path d="M-9,0 L-6,-5 L-3,-1 L0,-7 L3,-1 L6,-5 L9,0 Z" />
+            <circle cx="-6" cy="-5" r="1.2" />
+            <circle cx="0" cy="-7" r="1.2" />
+            <circle cx="6" cy="-5" r="1.2" />
+            <path d="M-9,2.5 Q0,7 9,2.5" fill="none" strokeWidth="1.3" />
+            <circle cx="0" cy="-12" r="1.6" />
+            <line x1="0" y1="-13.5" x2="0" y2="-16" strokeWidth="1" />
+            <line x1="-1.5" y1="-15" x2="1.5" y2="-15" strokeWidth="1" />
+          </g>
 
-          {/* two outward-facing heads */}
-          <path d="M-3,-14 Q-7,-13 -11,-11 L-15,-11 L-13,-8 Q-8,-9 -3,-10 Z" />
-          <path d="M3,-14 Q7,-13 11,-11 L15,-11 L13,-8 Q8,-9 3,-10 Z" />
-          {/* tiny eyes */}
-          <circle cx="-8" cy="-11" r="0.5" fill="#f5e7a3" stroke="none" />
-          <circle cx="8" cy="-11" r="0.5" fill="#f5e7a3" stroke="none" />
-
-          {/* body + tail */}
-          <path d="M-5,-10 L-7,4 L-3,12 L0,14 L3,12 L7,4 L5,-10 Z" />
-
-          {/* wings spread outward */}
+          {/* LEFT HEAD — neck curves out + clear beak */}
           <path
-            d="M-5,-8 L-18,-4 L-20,3 L-16,3 L-14,0 L-11,2 L-8,-1 L-6,1 Z"
+            d="M-4,-15
+               Q-10,-16 -14,-13
+               L-18,-12
+               L-20,-10
+               L-17,-9
+               L-14,-10
+               Q-8,-11 -4,-10
+               Z"
+          />
+          <polygon points="-20,-10 -23,-8 -20,-7" />
+          <circle cx="-14" cy="-12" r="0.7" fill="#f7e8a8" stroke="none" />
+
+          {/* RIGHT HEAD */}
+          <path
+            d="M4,-15
+               Q10,-16 14,-13
+               L18,-12
+               L20,-10
+               L17,-9
+               L14,-10
+               Q8,-11 4,-10
+               Z"
+          />
+          <polygon points="20,-10 23,-8 20,-7" />
+          <circle cx="14" cy="-12" r="0.7" fill="#f7e8a8" stroke="none" />
+
+          {/* WINGS — displayed posture, scalloped feather edges */}
+          <path
+            d="M-4,-10
+               C-12,-10 -18,-5 -21,3
+               L-18,5
+               L-16,2
+               L-14,5
+               L-12,1
+               L-10,4
+               L-8,0
+               L-5,3
+               Z"
           />
           <path
-            d="M5,-8 L18,-4 L20,3 L16,3 L14,0 L11,2 L8,-1 L6,1 Z"
+            d="M4,-10
+               C12,-10 18,-5 21,3
+               L18,5
+               L16,2
+               L14,5
+               L12,1
+               L10,4
+               L8,0
+               L5,3
+               Z"
           />
 
-          {/* chest shield (Austrian red-white-red implied via opacity bands) */}
-          <rect x="-2.5" y="-4" width="5" height="7" fill="currentColor" />
-          <rect x="-2.5" y="-2" width="5" height="1.2" fill="#f5e7a3" stroke="none" />
+          {/* BODY */}
+          <path d="M-5,-10 L-6,4 L-3,10 L0,13 L3,10 L6,4 L5,-10 Z" />
+
+          {/* TAIL feathers */}
+          <path d="M-3,10 L-5,17 L-2,14 L0,17 L2,14 L5,17 L3,10 Z" />
+
+          {/* CHEST SHIELD — Austrian red-white-red */}
+          <rect x="-3" y="-5" width="6" height="8" fill="currentColor" />
+          <rect x="-3" y="-2.5" width="6" height="1.6" fill="#f7e8a8" stroke="none" />
         </g>
       );
     case "sachertorte":
