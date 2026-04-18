@@ -12,68 +12,78 @@ interface CountryDef {
   pins: Record<string, CityPin>;
 }
 
+/*
+ * Simplified-but-recognizable silhouettes drawn within a 300×90 viewBox.
+ * Coordinates are hand-plotted from geographic references, not perfect
+ * shapes but close enough to read at first glance.
+ */
 const COUNTRIES: Record<"jp" | "dk" | "cz" | "at", CountryDef> = {
   jp: {
     label: "NIPPON",
     paths: [
-      // Hokkaido
-      "M 248,8 L 268,6 L 280,14 L 282,24 L 272,32 L 254,30 L 246,22 Z",
-      // Honshu (main curved island)
-      "M 262,28 L 272,32 L 258,40 L 235,46 L 210,52 L 188,58 L 168,63 L 155,60 L 170,52 L 195,44 L 220,36 L 245,30 Z",
-      // Shikoku
-      "M 162,66 L 180,64 L 186,70 L 178,74 L 162,71 Z",
-      // Kyushu
-      "M 128,66 L 145,64 L 152,74 L 143,82 L 125,80 Z",
+      // Hokkaido — the broad northern island
+      "M 248,6 L 258,4 L 272,8 L 281,14 L 283,22 L 278,30 L 268,33 L 254,32 L 244,25 L 240,16 Z",
+      // Honshu — long curved main island, from Tōhoku down through Kansai to Chūgoku
+      "M 237,28 L 244,33 L 252,36 L 261,40 L 264,47 L 258,52 L 245,55 L 226,56 L 203,57 L 178,59 L 158,60 L 152,57 L 148,54 L 162,52 L 183,50 L 207,48 L 228,45 L 242,41 L 236,36 L 230,32 Z",
+      // Shikoku — small island south of Honshu's Kansai
+      "M 178,62 L 194,61 L 207,65 L 209,70 L 198,73 L 182,71 L 174,66 Z",
+      // Kyushu — south-western island
+      "M 132,63 L 148,61 L 158,65 L 164,72 L 160,81 L 145,83 L 128,78 L 122,70 Z",
     ],
     pins: {
-      tokyo: { x: 225, y: 43, label: "TOKYO" },
+      tokyo: { x: 244, y: 44, label: "TOKYO" },
     },
   },
+
   dk: {
     label: "DANMARK",
     paths: [
-      // Jutland peninsula (main body reaching up)
-      "M 102,82 L 100,62 L 94,50 L 96,35 L 104,22 L 112,16 L 120,22 L 124,36 L 120,48 L 118,58 L 122,70 L 118,82 Z",
+      // Jutland (the peninsula reaching up from the German border)
+      "M 118,12 L 122,18 L 126,26 L 122,32 L 124,38 L 130,42 L 128,52 L 125,58 L 128,64 L 126,72 L 123,82 L 108,82 L 104,80 L 98,72 L 94,60 L 92,48 L 92,38 L 96,30 L 102,22 L 110,16 Z",
       // Fyn (central island)
-      "M 142,52 Q 148,46 156,50 Q 160,56 152,60 Q 144,60 142,56 Z",
-      // Zealand (big eastern island w/ Copenhagen)
-      "M 170,38 Q 182,34 196,40 Q 204,48 200,58 Q 188,64 174,60 Q 166,52 170,42 Z",
-      // Bornholm hint
-      "M 222,58 Q 228,56 230,62 Q 226,66 220,64 Z",
+      "M 143,52 L 150,46 L 160,48 L 164,55 L 160,62 L 150,63 L 142,58 Z",
+      // Zealand (large eastern island where Copenhagen sits)
+      "M 170,38 L 180,32 L 196,32 L 208,38 L 212,48 L 206,58 L 196,64 L 180,62 L 170,56 L 166,46 Z",
+      // Lolland + Falster (small southern islands)
+      "M 178,66 L 198,65 L 206,68 L 198,73 L 178,72 Z",
+      // Bornholm (distant eastern island)
+      "M 230,54 L 238,53 L 240,60 L 232,62 Z",
     ],
     pins: {
-      copenhagen: { x: 194, y: 49, label: "CPH" },
+      copenhagen: { x: 202, y: 48, label: "CPH" },
     },
   },
+
   cz: {
     label: "ČESKO",
     paths: [
-      // Rough CZ shape: diamond-ish, west-east oriented
-      "M 60,50 Q 76,30 110,22 L 165,20 L 205,28 L 232,38 L 240,52 Q 228,64 198,70 L 150,72 Q 110,70 85,62 Z",
+      // Czech Republic (Bohemia + Moravia) — rounded rhomboid, slightly pinched in the middle
+      "M 60,48 L 68,36 L 80,28 L 98,22 L 120,20 L 145,21 L 170,24 L 195,30 L 218,36 L 235,42 L 240,50 L 233,58 L 215,64 L 190,68 L 162,70 L 132,70 L 102,66 L 80,60 L 66,54 Z",
     ],
     pins: {
-      prague: { x: 125, y: 40, label: "PRG" },
+      prague: { x: 128, y: 42, label: "PRG" },
     },
   },
+
   at: {
     label: "ÖSTERREICH",
     paths: [
-      // Austria: elongated chili-shape, narrow east, wider middle
-      "M 52,50 Q 62,42 78,40 Q 105,36 135,38 Q 165,40 195,42 L 230,46 L 250,52 Q 248,58 232,60 Q 200,60 170,58 Q 140,56 110,56 Q 85,55 65,56 Z",
+      // Austria — long, narrow, widest toward the east (Vienna / Burgenland)
+      "M 48,50 L 58,44 L 72,40 L 92,38 L 116,38 L 140,40 L 164,42 L 188,44 L 212,46 L 232,46 L 250,48 L 256,54 L 250,58 L 238,60 L 218,62 L 198,62 L 172,60 L 146,60 L 118,62 L 92,62 L 72,60 L 56,58 Z",
+      // Vorarlberg tail on the far west
+      "M 48,50 L 44,54 L 46,60 L 52,60 L 56,58 Z",
     ],
     pins: {
-      vienna: { x: 230, y: 50, label: "WIEN" },
-      salzburg: { x: 130, y: 48, label: "SZG" },
+      vienna: { x: 240, y: 52, label: "WIEN" },
+      salzburg: { x: 132, y: 50, label: "SZG" },
     },
   },
 };
 
 function destinationCity(cityString: string): string {
-  // "Prague → Vienna" → "Vienna"
   if (cityString.includes("→")) {
     return cityString.split("→").pop()!.trim();
   }
-  // "Tokyo / Osaka" → "Tokyo"
   if (cityString.includes("/")) {
     return cityString.split("/")[0].trim();
   }
@@ -115,7 +125,7 @@ export default function CountryMap({ cityString }: Props) {
     <svg
       viewBox="0 0 300 90"
       width="100%"
-      height="96"
+      height="110"
       preserveAspectRatio="xMidYMid meet"
       role="img"
       aria-label={country.label}
@@ -148,10 +158,10 @@ export default function CountryMap({ cityString }: Props) {
           key={i}
           d={d}
           fill="var(--gold)"
-          fillOpacity="0.14"
+          fillOpacity="0.16"
           stroke="var(--gold)"
           strokeWidth="0.9"
-          strokeOpacity="0.75"
+          strokeOpacity="0.8"
           strokeLinejoin="round"
         />
       ))}
@@ -162,7 +172,13 @@ export default function CountryMap({ cityString }: Props) {
         return (
           <g key={key}>
             {active && (
-              <circle cx={p.x} cy={p.y} r="7" fill="var(--gold)" opacity="0.22" />
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r="7"
+                fill="var(--gold)"
+                opacity="0.22"
+              />
             )}
             <circle
               cx={p.x}
