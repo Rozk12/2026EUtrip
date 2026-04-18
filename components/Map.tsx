@@ -42,6 +42,26 @@ function FitBounds({ markers }: { markers: MarkerData[] }) {
   return null;
 }
 
+function FlyToFocus({
+  markers,
+  focusedKey,
+}: {
+  markers: MarkerData[];
+  focusedKey: string | null;
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (!focusedKey) return;
+    const m = markers.find((x) => x.key === focusedKey);
+    if (!m) return;
+    map.flyTo([m.lat, m.lng], Math.max(map.getZoom(), 13), {
+      duration: 1.3,
+      easeLinearity: 0.25,
+    });
+  }, [focusedKey, markers, map]);
+  return null;
+}
+
 interface Props {
   selectedDate: string | "all";
   focusedKey: string | null;
@@ -100,6 +120,7 @@ export default function MapView({ selectedDate, focusedKey }: Props) {
         subdomains="abcd"
       />
       <FitBounds markers={markers} />
+      <FlyToFocus markers={markers} focusedKey={focusedKey} />
       {legs.map((leg, i) => (
         <Polyline
           key={i}

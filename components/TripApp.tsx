@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { TripData } from "@/lib/trip";
 import DayTicket from "@/components/DayTicket";
 import { TripProvider } from "@/components/TripContext";
+import { todayISO } from "@/lib/day";
 
 const MapView = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -53,6 +54,36 @@ export default function TripApp({ initialTrip }: Props) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [mapOpen]);
+
+  // Snap to today's card on first mount (or nearest future day if before trip).
+  useEffect(() => {
+    const today = todayISO();
+    const dates = trip.itinerary.map((d) => d.date);
+    if (dates.length === 0) return;
+
+    let target = dates.findIndex((d) => d === today);
+    if (target === -1) {
+      if (today < dates[0]) {
+        target = 0; // trip not yet started
+      } else if (today > dates[dates.length - 1]) {
+        target = dates.length - 1; // trip finished, show last day
+      } else {
+        // mid-trip but exact date missing (gap day) — pick next future entry
+        target = dates.findIndex((d) => d > today);
+        if (target === -1) target = dates.length - 1;
+      }
+    }
+
+    // delay to ensure layout is done
+    const tm = setTimeout(() => {
+      const el = scrollerRef.current;
+      if (!el) return;
+      el.scrollTo({ left: target * el.clientWidth, behavior: "auto" });
+      setCurrentIdx(target);
+    }, 50);
+    return () => clearTimeout(tm);
+    // only run once after trip loads
+  }, [trip.itinerary.length]);
 
   // track current card via scroll position
   const onScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
