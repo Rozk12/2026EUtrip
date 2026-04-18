@@ -2,7 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Noto_Serif_JP } from "next/font/google";
 import { DAD_QUOTES } from "@/data/dad-quotes";
+
+const hyoro = Noto_Serif_JP({
+  subsets: ["latin"],
+  weight: ["200"],
+  display: "swap",
+});
 
 const SKIP_AFTER_SECONDS = 5;
 
@@ -42,24 +49,34 @@ export default function PapaPage() {
       </div>
 
       {/* main ad body */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-8">
-        <div className="h-48 w-48 overflow-hidden rounded-full ring-4 ring-amber-400 sm:h-64 sm:w-64">
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-6">
+        {/* speech bubble */}
+        <div className="relative w-full max-w-md rounded-3xl bg-white px-5 py-5 text-slate-900 shadow-2xl">
+          <div className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-amber-600">
+            {quote.title}
+          </div>
+          <div
+            className={`${hyoro.className} whitespace-pre-wrap text-[15px] leading-loose tracking-[0.05em] text-slate-800 sm:text-base`}
+          >
+            {quote.body}
+          </div>
+          {/* tail */}
+          <span
+            aria-hidden
+            className="absolute left-10 top-full -mt-[1px] h-0 w-0 border-x-[14px] border-t-[20px] border-x-transparent border-t-white"
+          />
+        </div>
+
+        {/* namazu */}
+        <div className="ml-4 h-24 w-24 self-start overflow-hidden rounded-full ring-4 ring-amber-400 sm:h-32 sm:w-32">
           <Image
             src="/assets/dad-namazu.png"
             alt=""
-            width={256}
-            height={256}
+            width={128}
+            height={128}
             className="h-full w-full object-cover"
             priority
           />
-        </div>
-        <div className="max-w-lg text-center">
-          <div className="mb-3 text-xs uppercase tracking-[0.2em] text-amber-400">
-            {quote.title}
-          </div>
-          <div className="whitespace-pre-wrap text-base leading-relaxed sm:text-lg">
-            {quote.body}
-          </div>
         </div>
       </div>
 
