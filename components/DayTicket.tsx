@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
 import { useTrip } from "@/components/TripContext";
 import { toRoman } from "@/lib/roman";
@@ -22,6 +22,7 @@ interface Props {
   city: string;
   idx: number;
   total: number;
+  isCurrent: boolean;
   onFocus: (key: string) => void;
 }
 
@@ -32,7 +33,14 @@ function formatCountdown(mins: number): string {
   return m === 0 ? `あと ${h}h` : `あと ${h}h ${m}m`;
 }
 
-export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
+export default function DayTicket({
+  date,
+  city,
+  idx,
+  total,
+  isCurrent,
+  onFocus,
+}: Props) {
   const trip = useTrip();
   const markers = buildMarkersForDate(trip, date);
   const route = dayRoute(trip, date);
@@ -55,6 +63,19 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
 
   const upcoming = isToday ? nextUpcoming(markers, now) : null;
   const untilMin = upcoming ? minutesUntil(upcoming.time, now) : null;
+
+  // Re-trigger the stamp animation each time this card becomes the
+  // currently-visible one (fresh mount via bumped key).
+  const [stampTick, setStampTick] = useState(0);
+  const wasCurrentRef = useRef(false);
+  useEffect(() => {
+    if (isCurrent && !wasCurrentRef.current) {
+      setStampTick((t) => t + 1);
+      wasCurrentRef.current = true;
+    } else if (!isCurrent) {
+      wasCurrentRef.current = false;
+    }
+  }, [isCurrent]);
 
   return (
     <article className="relative flex h-full w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto px-4 pb-24 pt-14">
@@ -221,10 +242,38 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
           style={{ background: color }}
         />
 
-        {/* passport stamp for past days */}
+        {/* passport stamp for past days — re-animates each time this card becomes current */}
         {isPast && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <PassportStamp city={route ? route.to : city} date={date} />
+          <div
+            key={stampTick}
+            className="pointer-events-none absolute inset-0 flex items-center justify-center"
+          >
+            <div className="relative">
+              <PassportStamp city={route ? route.to : city} date={date} />
+              <span className="stamp-shockwave" style={{ color: "var(--burgundy)" }} />
+              {/* ink specks */}
+              {[
+                { tx: "-60px", ty: "-34px" },
+                { tx: "58px", ty: "-40px" },
+                { tx: "-72px", ty: "22px" },
+                { tx: "70px", ty: "28px" },
+                { tx: "-12px", ty: "-72px" },
+                { tx: "18px", ty: "70px" },
+              ].map((s, i) => (
+                <span
+                  key={i}
+                  className="ink-speck"
+                  style={
+                    {
+                      color: "var(--burgundy)",
+                      ["--tx" as any]: s.tx,
+                      ["--ty" as any]: s.ty,
+                      animationDelay: `${0.7 + i * 0.02}s`,
+                    } as React.CSSProperties
+                  }
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>

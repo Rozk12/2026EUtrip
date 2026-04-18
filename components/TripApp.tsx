@@ -132,6 +132,7 @@ export default function TripApp({ initialTrip }: Props) {
               city={d.city}
               idx={i}
               total={total}
+              isCurrent={i === currentIdx}
               onFocus={(k) => {
                 setFocusedKey(k);
                 setMapOpen(true);

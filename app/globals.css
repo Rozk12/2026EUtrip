@@ -208,22 +208,88 @@ main > div[style*="scrollbar-width"]::-webkit-scrollbar {
 
 /* passport-style stamp, for days already passed */
 .passport-stamp-svg {
-  opacity: 0.82;
   transform: rotate(-12deg);
-  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.15));
-  animation: stamp-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.2));
+  animation: stamp-press 0.9s cubic-bezier(0.17, 0.67, 0.32, 1.25) both;
+  animation-delay: 0.35s;
 }
-@keyframes stamp-in {
+@keyframes stamp-press {
   0% {
     opacity: 0;
-    transform: rotate(-12deg) scale(1.8);
+    transform: rotate(-34deg) translateY(-55px) scale(2.05);
+    filter: blur(1.8px);
   }
-  55% {
-    opacity: 0.95;
-    transform: rotate(-12deg) scale(0.92);
+  38% {
+    opacity: 1;
+    filter: blur(0);
+    transform: rotate(-12deg) translateY(0) scale(0.78);
+  }
+  48% {
+    transform: rotate(-12deg) translateY(0) scale(1.18);
+  }
+  60% {
+    transform: rotate(-12deg) translateY(0) scale(0.9);
+  }
+  75% {
+    transform: rotate(-12deg) translateY(0) scale(1.04);
   }
   100% {
     opacity: 0.82;
-    transform: rotate(-12deg) scale(1);
+    transform: rotate(-12deg) translateY(0) scale(1);
+  }
+}
+
+/* Shockwave ring that briefly pulses out of the stamp on impact */
+.stamp-shockwave {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  border: 2px solid var(--burgundy, #8c2430);
+  border-radius: 9999px;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+  animation: shock 0.7s ease-out both;
+  animation-delay: 0.7s;
+}
+@keyframes shock {
+  0% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+}
+
+/* Tiny ink specks that spray out when the stamp lands */
+.ink-speck {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: currentColor;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  animation: speck 0.8s cubic-bezier(0.15, 0.7, 0.3, 1) both;
+  animation-delay: 0.73s;
+}
+@keyframes speck {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  25% {
+    opacity: 0.95;
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, 0px))) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx, 0px) * 1.2), calc(-50% + var(--ty, 0px) * 1.2)) scale(0.6);
   }
 }
