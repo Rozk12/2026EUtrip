@@ -58,7 +58,7 @@ export default function TripApp({ initialTrip }: Props) {
           <div className="pointer-events-none absolute left-3 top-3 hidden sm:block">
             <div className="flex items-center gap-2 border border-[rgba(212,168,75,0.5)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 font-title text-[10px] tracking-[0.4em] text-[var(--gold)] shadow backdrop-blur">
               <span className="deco-diamond" style={{ width: 6, height: 6, margin: 0 }} />
-              MAPPA · EUROPAE
+              EUROPAKORT
               <span className="deco-diamond" style={{ width: 6, height: 6, margin: 0 }} />
             </div>
           </div>

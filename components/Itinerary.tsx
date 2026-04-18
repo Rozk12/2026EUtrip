@@ -52,10 +52,10 @@ export default function Itinerary({
           <span className="chevron-label">MMXXVI</span>
         </div>
         <h1 className="mt-3 text-center font-deco text-[34px] font-normal leading-none text-[var(--gold)] sm:text-[42px]">
-          Le Grand Tour
+          Den Store Rejse
         </h1>
         <div className="mt-2 text-center font-title text-[10px] tracking-[0.45em] text-[var(--cream-soft)]">
-          COPENHAGEN &nbsp;·&nbsp; PRAGUE &nbsp;·&nbsp; VIENNA &nbsp;·&nbsp;
+          KØBENHAVN &nbsp;·&nbsp; PRAG &nbsp;·&nbsp; WIEN &nbsp;·&nbsp;
           SALZBURG
         </div>
         <div className="deco-ornament mt-3">
@@ -75,7 +75,7 @@ export default function Itinerary({
             data-active={selectedDate === "all"}
             onClick={() => onSelectDate("all")}
           >
-            TOUT
+            ALT
           </button>
           {trip.itinerary.map((d) => {
             const active = selectedDate === d.date;
@@ -126,7 +126,7 @@ export default function Itinerary({
 
                 {markers.length === 0 ? (
                   <div className="px-5 pb-4 text-[11px] italic text-[var(--cream-soft)] opacity-70">
-                    — repos （予定なし・滞在中）—
+                    — hvile （予定なし・滞在中）—
                   </div>
                 ) : (
                   <ul className="pb-2">
@@ -184,7 +184,7 @@ export default function Itinerary({
           })}
         </ol>
         <div className="deco-ornament px-6 py-5 text-[10px] tracking-[0.45em]">
-          FIN DU VOYAGE
+          REJSENS SLUT
         </div>
       </div>
     </div>

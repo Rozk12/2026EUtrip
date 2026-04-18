@@ -25,8 +25,8 @@ const garamond = EB_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Le Grand Tour · MMXXVI",
-  description: "Copenhagen · Prague · Vienna · Salzburg",
+  title: "Den Store Rejse · MMXXVI",
+  description: "København · Prag · Wien · Salzburg",
 };
 
 export default function RootLayout({
