@@ -467,17 +467,72 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
         </g>
       );
     case "mozart":
-      // Mozart profile silhouette (wig + face)
+      // Mozart cameo silhouette, facing left (nose points left)
       return (
-        <g stroke="currentColor" strokeWidth="1.2" fill="currentColor" strokeLinejoin="round">
-          {/* wig top */}
-          <path d="M-12,-18 Q-14,-10 -16,-4 Q-18,4 -14,8 Q-10,6 -6,4 L-6,-14 Q-6,-20 0,-20 Q10,-20 10,-10 Q10,0 8,8 L4,12 Q0,14 -4,14 Q-8,14 -10,12 Z" />
-          {/* wig side curls */}
-          <circle cx="-14" cy="0" r="3" />
-          <circle cx="-10" cy="8" r="2.5" />
-          <circle cx="8" cy="8" r="2.5" />
-          {/* face cutout */}
-          <path d="M-4,-8 Q-4,-12 0,-12 Q4,-12 4,-6 Q4,0 0,2 Q-4,0 -4,-8 Z" fill="var(--night,black)" opacity="0.15" stroke="none" />
+        <g fill="currentColor" stroke="currentColor" strokeLinejoin="round" strokeWidth="0.6">
+          {/* main silhouette: wig + face + neck + collar */}
+          <path
+            d="
+              M 2,-20
+              C 10,-21 15,-17 15,-10
+              C 15,-5 14,-2 15,1
+              L 18,2
+              L 18,6
+              L 14,5
+              C 12,9 9,11 5,12
+              L 5,15
+              L -2,15
+              L -3,12
+              L -5,10
+              L -6,8
+              L -7,5
+              L -8,4
+              L -6,2
+              L -8,0
+              L -10,-1
+              L -13,-2
+              L -10,-5
+              L -8,-8
+              L -7,-12
+              L -4,-16
+              Z
+            "
+          />
+
+          {/* side curl (large round roll above the ear) */}
+          <circle
+            cx="11"
+            cy="-1"
+            r="3.2"
+            fill="#f7e8a8"
+            stroke="currentColor"
+            strokeWidth="0.7"
+          />
+          <circle cx="11" cy="-1" r="1.1" fill="currentColor" stroke="none" />
+
+          {/* small second curl lower */}
+          <circle
+            cx="9"
+            cy="6"
+            r="2.1"
+            fill="#f7e8a8"
+            stroke="currentColor"
+            strokeWidth="0.6"
+          />
+
+          {/* ribbon on the queue */}
+          <rect x="15" y="1" width="3.2" height="1.4" fill="#f7e8a8" stroke="none" />
+
+          {/* cravat detail on the collar */}
+          <path
+            d="M-1,12 L-1,15 L2,15 L2,12 Z"
+            fill="#f7e8a8"
+            stroke="currentColor"
+            strokeWidth="0.5"
+          />
+
+          {/* tiny eye */}
+          <circle cx="-5" cy="-7" r="0.7" fill="#f7e8a8" stroke="none" />
         </g>
       );
     case "fortress":
