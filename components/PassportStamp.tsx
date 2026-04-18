@@ -25,7 +25,7 @@ type LandmarkKey =
   | "violin"
   | "astroclock"
   | "train"
-  | "conductor"
+  | "habsburg"
   | "sachertorte"
   | "mozart"
   | "fortress"
@@ -78,9 +78,9 @@ const DATE_STAMPS: Record<string, StampConfig> = {
   },
   "2026-05-01": {
     city: "WIEN",
-    country: "MUSIKVEREIN",
-    color: "#b4412a",
-    landmark: "conductor",
+    country: "K.u.K. · MUSIKVEREIN",
+    color: "#7a1d1d",
+    landmark: "habsburg",
   },
   "2026-05-02": {
     city: "WIEN → SALZBURG",
@@ -259,24 +259,38 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
           <path d="M-24,14 L16,14" strokeWidth="1" />
         </g>
       );
-    case "conductor":
-      // Music conductor baton + notes
+    case "habsburg":
+      // Habsburg double-headed imperial eagle
       return (
-        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
-          {/* baton */}
-          <line x1="-14" y1="10" x2="10" y2="-12" strokeWidth="1.8" />
-          <circle cx="-14" cy="10" r="2.5" />
-          {/* music notes */}
-          <g>
-            <circle cx="-4" cy="6" r="2.5" />
-            <line x1="-1.5" y1="6" x2="-1.5" y2="-6" strokeWidth="1.3" />
-            <path d="M-1.5,-6 Q2,-8 3,-4" fill="none" strokeWidth="1.2" />
-          </g>
-          <g opacity="0.85">
-            <circle cx="12" cy="12" r="2" />
-            <line x1="14" y1="12" x2="14" y2="2" strokeWidth="1.2" />
-            <path d="M14,2 Q17,1 17,5" fill="none" strokeWidth="1" />
-          </g>
+        <g stroke="currentColor" strokeWidth="1.1" fill="currentColor" strokeLinejoin="round">
+          {/* imperial crown on top */}
+          <rect x="-8" y="-20" width="16" height="2.5" />
+          <path d="M-8,-20 L-8,-23 L-5,-23 L-5,-20 M-2,-20 L-2,-24 L2,-24 L2,-20 M5,-20 L5,-23 L8,-23 L8,-20" fill="currentColor" />
+          <path d="M-8,-17.5 Q0,-14 8,-17.5" fill="none" strokeWidth="1.1" />
+          <circle cx="0" cy="-25.5" r="1.2" />
+          <line x1="0" y1="-24.5" x2="0" y2="-22" strokeWidth="0.9" />
+
+          {/* two outward-facing heads */}
+          <path d="M-3,-14 Q-7,-13 -11,-11 L-15,-11 L-13,-8 Q-8,-9 -3,-10 Z" />
+          <path d="M3,-14 Q7,-13 11,-11 L15,-11 L13,-8 Q8,-9 3,-10 Z" />
+          {/* tiny eyes */}
+          <circle cx="-8" cy="-11" r="0.5" fill="#f5e7a3" stroke="none" />
+          <circle cx="8" cy="-11" r="0.5" fill="#f5e7a3" stroke="none" />
+
+          {/* body + tail */}
+          <path d="M-5,-10 L-7,4 L-3,12 L0,14 L3,12 L7,4 L5,-10 Z" />
+
+          {/* wings spread outward */}
+          <path
+            d="M-5,-8 L-18,-4 L-20,3 L-16,3 L-14,0 L-11,2 L-8,-1 L-6,1 Z"
+          />
+          <path
+            d="M5,-8 L18,-4 L20,3 L16,3 L14,0 L11,2 L8,-1 L6,1 Z"
+          />
+
+          {/* chest shield (Austrian red-white-red implied via opacity bands) */}
+          <rect x="-2.5" y="-4" width="5" height="7" fill="currentColor" />
+          <rect x="-2.5" y="-2" width="5" height="1.2" fill="#f5e7a3" stroke="none" />
         </g>
       );
     case "sachertorte":
