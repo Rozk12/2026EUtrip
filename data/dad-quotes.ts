@@ -105,4 +105,9 @@ export const DAD_QUOTES: DadQuote[] = [
     title: "GRIT",
     body: '人生の成功は、"GRIT" で決まる。\nGuts・Resilience・Initiative・Tenacity。\nつまり「やり抜く力」。\nこの前、TEDで見た。',
   },
+  {
+    id: 21,
+    title: "会長の無茶振り",
+    body: "会長から「これ、AIでできん？」と無茶振りされた。\nできるかどうかではなく、やるかどうか。\n僕は「はい」と即答した。",
+  },
 ];
