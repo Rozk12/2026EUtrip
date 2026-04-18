@@ -9,14 +9,28 @@
   },
   "flights": [
     {
+      "id": "flight_1_ryu_domestic",
+      "type": "flight",
+      "traveler": "Ryu",
+      "airline": "ANA",
+      "flightNumbers": ["NH95"],
+      "from": { "city": "東京", "airport": "HND", "lat": 35.5494, "lng": 139.7798 },
+      "to": { "city": "大阪", "airport": "KIX", "lat": 34.4347, "lng": 135.2440 },
+      "departure": "2026-04-25T18:25:00+09:00",
+      "arrival": "2026-04-25T19:50:00+09:00",
+      "bookingRef": "T8CGG4",
+      "class": "Economy",
+      "note": "KIXでYokoと合流しTK87に乗継（時間は目安、要確認）"
+    },
+    {
       "id": "flight_1_ryu",
       "type": "flight",
       "traveler": "Ryu",
-      "airline": "ANA + Turkish Airlines",
-      "flightNumbers": ["NH95", "TK87", "TK1783"],
-      "from": { "city": "東京", "airport": "HND", "lat": 35.5494, "lng": 139.7798 },
+      "airline": "Turkish Airlines",
+      "flightNumbers": ["TK87", "TK1783"],
+      "from": { "city": "大阪", "airport": "KIX", "lat": 34.4347, "lng": 135.2440 },
       "to": { "city": "Copenhagen", "airport": "CPH", "lat": 55.6121, "lng": 12.6477 },
-      "departure": "2026-04-25T18:25:00+09:00",
+      "departure": "2026-04-25T22:10:00+09:00",
       "arrival": "2026-04-26T09:30:00+02:00",
       "bookingRef": "T8CGG4",
       "class": "Economy (W)",
@@ -201,7 +215,7 @@
     }
   ],
   "itinerary": [
-    { "date": "2026-04-25", "city": "Tokyo / Osaka", "events": ["flight_1_ryu", "flight_1_yoko"] },
+    { "date": "2026-04-25", "city": "Tokyo / Osaka", "events": ["flight_1_ryu_domestic", "flight_1_ryu", "flight_1_yoko"] },
     { "date": "2026-04-26", "city": "Copenhagen", "events": [] },
     { "date": "2026-04-27", "city": "Copenhagen", "events": [] },
     { "date": "2026-04-28", "city": "Prague", "events": ["flight_2", "event_1"] },
