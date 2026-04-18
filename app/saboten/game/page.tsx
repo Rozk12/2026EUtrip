@@ -179,6 +179,9 @@ export default function WhackPage() {
               setShowNarration(true);
             }, 300);
             setTimeout(() => setCanRestart(true), 5500);
+            setTimeout(() => {
+              window.location.href = "/papa";
+            }, 7500);
             return m;
           });
           return 0;
@@ -295,25 +298,7 @@ export default function WhackPage() {
             <span>最大コンボ: {bestCombo}</span>
             <span>見逃し: {missed}</span>
           </div>
-          <div className="flex flex-col items-center gap-2">
-            <button
-              onClick={canRestart ? start : undefined}
-              disabled={!canRestart}
-              className={`mt-2 rounded-full px-6 py-3 text-base font-bold text-white shadow transition active:scale-95 ${
-                canRestart
-                  ? "bg-emerald-600 hover:bg-emerald-700"
-                  : "cursor-not-allowed bg-slate-400"
-              }`}
-            >
-              {canRestart ? "もう一回" : "見送り中…"}
-            </button>
-            <a
-              href="/papa"
-              className="animate-pulse rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-rose-500 px-6 py-3 text-base font-bold text-white shadow-lg ring-4 ring-amber-300"
-            >
-              🎁 ご褒美を受け取る 🎁
-            </a>
-          </div>
+          <div className="mt-2 text-xs text-slate-500">見送り中…</div>
         </div>
       )}
 
