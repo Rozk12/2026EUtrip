@@ -278,22 +278,70 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
         </g>
       );
     case "train":
+      // Streamlined steam locomotive, art-deco feel, with steam plume and speed lines
       return (
-        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
-          {/* locomotive body */}
-          <rect x="-20" y="-8" width="30" height="14" rx="1" />
-          {/* cabin */}
-          <rect x="-4" y="-14" width="14" height="6" />
+        <g stroke="currentColor" strokeWidth="1.1" fill="currentColor" strokeLinejoin="round" strokeLinecap="round">
+          {/* steam plume drifting back (train heads left) */}
+          <g fill="currentColor" opacity="0.85">
+            <ellipse cx="-14" cy="-16" rx="2" ry="1.6" />
+            <ellipse cx="-11" cy="-19" rx="2.6" ry="2" />
+            <ellipse cx="-6" cy="-21" rx="3.2" ry="2.4" />
+            <ellipse cx="0" cy="-20" rx="2.9" ry="2.2" />
+            <ellipse cx="6" cy="-18" rx="2.3" ry="1.8" />
+            <ellipse cx="11" cy="-17" rx="1.7" ry="1.4" />
+          </g>
+
           {/* chimney */}
-          <rect x="-16" y="-12" width="3" height="4" />
-          {/* window */}
-          <rect x="-2" y="-12" width="4" height="3" fill="var(--night,black)" opacity="0.3" stroke="currentColor" strokeWidth="0.8" />
-          {/* wheels */}
-          <circle cx="-14" cy="8" r="3.5" fill="none" />
-          <circle cx="-4" cy="8" r="3.5" fill="none" />
-          <circle cx="6" cy="8" r="3.5" fill="none" />
-          {/* tracks */}
-          <path d="M-24,14 L16,14" strokeWidth="1" />
+          <rect x="-19" y="-14" width="4" height="6" />
+          <rect x="-20" y="-15" width="6" height="1.5" />
+
+          {/* main streamlined body with cab */}
+          <path d="M-14,-8 L-14,-12 L-4,-12 L-4,-8 L16,-8 L20,-4 L20,4 L-21,4 L-21,-2 Q-21,-8 -14,-8 Z" />
+
+          {/* cab windows */}
+          <rect x="-12" y="-10" width="3" height="2.5" fill="#f7e8a8" stroke="none" />
+          <rect x="-8" y="-10" width="3" height="2.5" fill="#f7e8a8" stroke="none" />
+
+          {/* pinstripe running line */}
+          <line x1="-21" y1="-2" x2="19" y2="-2" stroke="#f7e8a8" strokeWidth="0.8" />
+
+          {/* smokebox (round front plate) */}
+          <circle cx="-17" cy="-1" r="4.2" fill="currentColor" />
+          <circle cx="-17" cy="-1" r="2.6" fill="#f7e8a8" stroke="none" />
+          {/* headlight in smokebox */}
+          <circle cx="-17" cy="-1" r="1" fill="currentColor" stroke="none" />
+
+          {/* row of portholes */}
+          <circle cx="0" cy="-5" r="1.3" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.6" />
+          <circle cx="6" cy="-5" r="1.3" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.6" />
+          <circle cx="12" cy="-5" r="1.3" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.6" />
+
+          {/* driving wheels */}
+          <circle cx="-10" cy="8" r="4.5" fill="currentColor" />
+          <circle cx="-10" cy="8" r="2.8" fill="#f7e8a8" stroke="none" />
+          <circle cx="0" cy="8" r="4.5" fill="currentColor" />
+          <circle cx="0" cy="8" r="2.8" fill="#f7e8a8" stroke="none" />
+          <circle cx="10" cy="8" r="4.5" fill="currentColor" />
+          <circle cx="10" cy="8" r="2.8" fill="#f7e8a8" stroke="none" />
+
+          {/* connecting rod */}
+          <rect x="-11" y="7" width="22" height="1.6" fill="currentColor" />
+          <circle cx="-10" cy="8" r="0.7" fill="currentColor" stroke="none" />
+          <circle cx="0" cy="8" r="0.7" fill="currentColor" stroke="none" />
+          <circle cx="10" cy="8" r="0.7" fill="currentColor" stroke="none" />
+
+          {/* small pilot wheel under smokebox */}
+          <circle cx="-17" cy="6" r="2.2" fill="currentColor" />
+
+          {/* speed lines trailing to the right */}
+          <g stroke="currentColor" strokeWidth="1.1" opacity="0.8" fill="none" strokeLinecap="round">
+            <line x1="21" y1="-4" x2="28" y2="-4" />
+            <line x1="21" y1="0" x2="30" y2="0" />
+            <line x1="21" y1="3" x2="26" y2="3" />
+          </g>
+
+          {/* track */}
+          <line x1="-24" y1="14" x2="24" y2="14" strokeWidth="0.9" />
         </g>
       );
     case "habsburg":
