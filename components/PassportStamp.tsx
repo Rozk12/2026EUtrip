@@ -218,26 +218,63 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
         </g>
       );
     case "astroclock":
-      // Prague astronomical clock: circle with Roman numerals
+      // Prague Old Town Hall tower (Orloj) — spire, crenellations, clock, arch
       return (
-        <g stroke="currentColor" strokeWidth="1.3" fill="none">
-          <circle cx="0" cy="0" r="18" />
-          <circle cx="0" cy="0" r="14" />
-          {/* tick marks at 12 positions */}
-          {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((a, i) => (
-            <line
-              key={i}
-              x1={14 * Math.cos(((a - 90) * Math.PI) / 180)}
-              y1={14 * Math.sin(((a - 90) * Math.PI) / 180)}
-              x2={17 * Math.cos(((a - 90) * Math.PI) / 180)}
-              y2={17 * Math.sin(((a - 90) * Math.PI) / 180)}
-              strokeWidth="1.3"
-            />
-          ))}
-          {/* hands */}
-          <line x1="0" y1="0" x2="0" y2="-11" strokeWidth="1.5" />
-          <line x1="0" y1="0" x2="8" y2="2" strokeWidth="1.5" />
-          <circle cx="0" cy="0" r="1.5" fill="currentColor" />
+        <g stroke="currentColor" strokeWidth="1.1" fill="currentColor" strokeLinejoin="round">
+          {/* main Gothic spire */}
+          <path d="M0,-26 L-4,-14 L4,-14 Z" />
+          <line x1="0" y1="-28" x2="0" y2="-26" strokeWidth="0.8" />
+
+          {/* side pinnacles */}
+          <path d="M-10,-18 L-11,-11 L-8,-11 L-9,-18 Z" />
+          <path d="M10,-18 L11,-11 L8,-11 L9,-18 Z" />
+
+          {/* top platform with crenellations */}
+          <rect x="-12" y="-14" width="24" height="3" />
+          <g>
+            <rect x="-12" y="-16" width="2" height="2.2" />
+            <rect x="-8" y="-16" width="2" height="2.2" />
+            <rect x="-4" y="-16" width="2" height="2.2" />
+            <rect x="0" y="-16" width="2" height="2.2" />
+            <rect x="4" y="-16" width="2" height="2.2" />
+            <rect x="8" y="-16" width="2" height="2.2" />
+          </g>
+
+          {/* tower body */}
+          <rect x="-9" y="-11" width="18" height="26" />
+
+          {/* decorative frame around clock */}
+          <rect x="-8" y="-8" width="16" height="14" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.7" />
+
+          {/* astronomical clock face */}
+          <circle cx="0" cy="-1" r="6" fill="currentColor" />
+          <circle cx="0" cy="-1" r="5" fill="#f7e8a8" stroke="none" />
+          <circle cx="0" cy="-1" r="3.6" fill="none" stroke="currentColor" strokeWidth="0.6" />
+          {/* tick marks (12 positions) */}
+          {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((a, i) => {
+            const rad = ((a - 90) * Math.PI) / 180;
+            return (
+              <line
+                key={i}
+                x1={4.2 * Math.cos(rad)}
+                y1={-1 + 4.2 * Math.sin(rad)}
+                x2={5 * Math.cos(rad)}
+                y2={-1 + 5 * Math.sin(rad)}
+                stroke="currentColor"
+                strokeWidth="0.7"
+              />
+            );
+          })}
+          {/* clock hands */}
+          <line x1="0" y1="-1" x2="0" y2="-4.3" stroke="currentColor" strokeWidth="1" />
+          <line x1="0" y1="-1" x2="3" y2="0.3" stroke="currentColor" strokeWidth="1" />
+          <circle cx="0" cy="-1" r="0.7" />
+
+          {/* small round window above clock */}
+          <circle cx="0" cy="-10.5" r="0.9" fill="#f7e8a8" stroke="none" />
+
+          {/* ground arch door */}
+          <path d="M-4,15 L-4,10 Q0,7 4,10 L4,15 Z" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.8" />
         </g>
       );
     case "train":
