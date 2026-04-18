@@ -78,6 +78,14 @@ Vercelプロジェクト → Settings → Environment Variables:
 2. Webアプリをリロード → 60秒以内にSheetの内容が反映
 3. Sheetはリンク公開不要。共有はRyu/Yokoの個人アカウントのみ
 
+## アクセス制限（Basic認証）
+
+`BASIC_AUTH_USER` と `BASIC_AUTH_PASS` をVercel環境変数に設定すると、
+全ページにBasic認証がかかります（middleware経由）。未設定なら公開状態。
+
+ブラウザから初回アクセス時にID/PWダイアログが出ます。パスワードは
+ブラウザが覚えるので、Yoko/Aoi に共有したら2回目以降は自動入力。
+
 ## Vercel にデプロイ
 
 ```bash
