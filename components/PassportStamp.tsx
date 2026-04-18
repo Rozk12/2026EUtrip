@@ -340,8 +340,36 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
             <line x1="21" y1="3" x2="26" y2="3" />
           </g>
 
-          {/* track */}
-          <line x1="-24" y1="14" x2="24" y2="14" strokeWidth="0.9" />
+          {/* RAIL — top rail line */}
+          <line x1="-26" y1="13" x2="26" y2="13" strokeWidth="1.4" stroke="currentColor" />
+          <line
+            x1="-26"
+            y1="14.6"
+            x2="26"
+            y2="14.6"
+            strokeWidth="0.7"
+            stroke="currentColor"
+            opacity="0.55"
+          />
+
+          {/* SLEEPERS / ties below the rail */}
+          {[-24, -18, -12, -6, 0, 6, 12, 18, 24].map((x) => (
+            <rect
+              key={x}
+              x={x - 1.3}
+              y="13"
+              width="2.6"
+              height="4.2"
+              fill="currentColor"
+            />
+          ))}
+
+          {/* BALLAST dots */}
+          <g opacity="0.55" fill="currentColor">
+            {[-22, -15, -9, -3, 3, 9, 15, 21].map((x, i) => (
+              <circle key={i} cx={x} cy="19" r="0.55" />
+            ))}
+          </g>
         </g>
       );
     case "habsburg":
