@@ -122,7 +122,7 @@ export default function TripApp({ initialTrip }: Props) {
         <div
           ref={scrollerRef}
           onScroll={onScroll}
-          className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth"
+          className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth"
           style={{ scrollbarWidth: "none" }}
         >
           {trip.itinerary.map((d, i) => (

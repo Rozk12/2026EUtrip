@@ -57,7 +57,7 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
   const untilMin = upcoming ? minutesUntil(upcoming.time, now) : null;
 
   return (
-    <article className="relative flex h-full w-screen shrink-0 snap-center flex-col items-center justify-start px-4 pt-14">
+    <article className="relative flex h-full w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto px-4 pb-24 pt-14">
       {/* ticket card */}
       <div className="ticket relative flex w-full max-w-md flex-col">
         {/* top band: route */}
