@@ -230,7 +230,7 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
       </div>
 
       {/* country silhouette in the empty space below the ticket */}
-      <div className="mt-4 w-full max-w-md opacity-85">
+      <div className="mt-4 w-full max-w-md opacity-90">
         <div className="mb-1 flex items-center justify-between px-1">
           <span className="chevron-label">LAND</span>
           <span className="font-title text-[8px] tracking-[0.3em] text-[var(--cream-soft)]">
@@ -239,7 +239,11 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
               : city.toUpperCase()}
           </span>
         </div>
-        <CountryMap cityString={city} />
+        <CountryMap
+          cityString={city}
+          fromCity={route?.from}
+          toCity={route?.to}
+        />
       </div>
     </article>
   );
