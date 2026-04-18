@@ -5,7 +5,7 @@ import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
 import { useTrip } from "@/components/TripContext";
 import { toRoman } from "@/lib/roman";
 import PassportStamp from "@/components/PassportStamp";
-import MiniMap from "@/components/MiniMap";
+import CountryMap from "@/components/CountryMap";
 import {
   currentHHMM,
   dayRoute,
@@ -205,19 +205,15 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
           )}
         </div>
 
-        {/* mini route map */}
+        {/* country map */}
         <div className="border-t border-dashed border-[rgba(212,168,75,0.35)] px-2 py-2">
           <div className="mb-1 flex items-center justify-between px-3">
-            <span className="chevron-label">RUTE</span>
+            <span className="chevron-label">LAND</span>
             <span className="font-title text-[8px] tracking-[0.3em] text-[var(--cream-soft)]">
               {route ? `${route.from.toUpperCase()} → ${route.to.toUpperCase()}` : city.toUpperCase()}
             </span>
           </div>
-          <MiniMap
-            city={route ? null : city}
-            from={route?.from}
-            to={route?.to}
-          />
+          <CountryMap cityString={city} />
         </div>
 
         {/* bottom band */}
