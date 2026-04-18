@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import CactusFace, { type Face } from "@/components/CactusFace";
 
 const HOLES = 9;
 const GAME_SECONDS = 30;
@@ -10,16 +11,14 @@ const SHOW_START_MS = 1200;
 const SHOW_END_MS = 700;
 const DOUBLE_SPAWN_AFTER_S = 15;
 
-const SAD_LINES = [
-  "彼らはもう戻ってきません。",
-  "あなたのせいです。",
-  "サボテンの霊が、あなたを見守っています。",
-  "次は頑張れ。たぶん。",
-  "サボテンは空でも生きていけるそうです。",
-  "見逃したサボテンの記憶を忘れないでください。",
-  "風がサボテンを連れていきました。",
-  "彼らはもう、星の一部です。",
-];
+const FACES: Face[] = ["sad", "dizzy", "silly", "angry", "shock", "wink"];
+const RISE_VARIANTS = [
+  "rise-zigzag",
+  "rise-wobble",
+  "rise-spin",
+  "rise-pause",
+  "rise-drift",
+] as const;
 
 interface HoleState {
   active: boolean;
@@ -32,6 +31,10 @@ interface SkyCactus {
   x: number;
   delay: number;
   size: number;
+  duration: number;
+  variant: (typeof RISE_VARIANTS)[number];
+  face: Face;
+  spinDir: 1 | -1;
 }
 
 const emptyHoles = (): HoleState[] =>
@@ -42,6 +45,8 @@ const emptyHoles = (): HoleState[] =>
   }));
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const pick = <T,>(arr: readonly T[]): T =>
+  arr[Math.floor(Math.random() * arr.length)];
 
 export default function WhackPage() {
   const [holes, setHoles] = useState<HoleState[]>(emptyHoles);
@@ -53,7 +58,7 @@ export default function WhackPage() {
   const [phase, setPhase] = useState<"idle" | "playing" | "over">("idle");
   const [hits, setHits] = useState<{ id: number; idx: number }[]>([]);
   const [skyCacti, setSkyCacti] = useState<SkyCactus[]>([]);
-  const [sadLine, setSadLine] = useState("");
+  const [showNarration, setShowNarration] = useState(false);
   const [canRestart, setCanRestart] = useState(false);
 
   const spawnRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -111,11 +116,15 @@ export default function WhackPage() {
     const arr: SkyCactus[] = Array.from({ length: count }, (_, i) => ({
       id: Date.now() + i,
       x: 5 + Math.random() * 90,
-      delay: Math.random() * 0.8,
-      size: 28 + Math.random() * 28,
+      delay: Math.random() * 1.5,
+      size: 36 + Math.random() * 24,
+      duration: 5 + Math.random() * 2.5,
+      variant: pick(RISE_VARIANTS),
+      face: pick(FACES),
+      spinDir: Math.random() < 0.5 ? 1 : -1,
     }));
     setSkyCacti(arr);
-    setTimeout(() => setSkyCacti([]), 5000);
+    setTimeout(() => setSkyCacti([]), 9000);
   };
 
   const start = () => {
@@ -128,6 +137,7 @@ export default function WhackPage() {
     setTimeLeft(GAME_SECONDS);
     setPhase("playing");
     setSkyCacti([]);
+    setShowNarration(false);
     setCanRestart(false);
     elapsedRef.current = 0;
 
@@ -160,12 +170,13 @@ export default function WhackPage() {
           stopAll();
           setHoles(emptyHoles());
           setPhase("over");
-          setSadLine(SAD_LINES[Math.floor(Math.random() * SAD_LINES.length)]);
           setCanRestart(false);
-          setTimeout(() => setCanRestart(true), 3500);
-          // launch missed cacti to sky after a beat
           setMissed((m) => {
-            setTimeout(() => launchSky(Math.min(m, 40)), 200);
+            setTimeout(() => {
+              launchSky(Math.min(Math.max(m, 1), 50));
+              setShowNarration(true);
+            }, 300);
+            setTimeout(() => setCanRestart(true), 5500);
             return m;
           });
           return 0;
@@ -200,7 +211,7 @@ export default function WhackPage() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-start gap-4 overflow-hidden bg-gradient-to-b from-sky-300 via-amber-50 to-amber-200 px-4 pb-8 pt-6">
-      <h1 className="text-2xl font-black tracking-tight text-emerald-900 sm:text-4xl">
+      <h1 className="z-10 text-2xl font-black tracking-tight text-emerald-900 sm:text-4xl">
         🌵 サボテン叩き 🌵
       </h1>
 
@@ -242,7 +253,7 @@ export default function WhackPage() {
               className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-b from-amber-200 to-amber-400 shadow-inner"
             >
               <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-amber-700 to-transparent opacity-50" />
-              <div className="absolute inset-x-0 bottom-0 flex justify-center pb-2">
+              <div className="absolute inset-x-0 bottom-0 flex justify-center pb-1">
                 <span
                   className={`text-5xl transition-transform duration-150 ease-out sm:text-6xl ${
                     h.active
@@ -282,11 +293,6 @@ export default function WhackPage() {
             <span>最大コンボ: {bestCombo}</span>
             <span>見逃し: {missed}</span>
           </div>
-          <p className="max-w-xs text-center text-sm italic text-slate-700">
-            捕まえられなかった <b className="text-rose-600">{missed}</b>{" "}
-            本のサボテンは、空へと帰っていきました…
-          </p>
-          <p className="text-xs text-slate-500">{sadLine}</p>
           <button
             onClick={canRestart ? start : undefined}
             disabled={!canRestart}
@@ -296,7 +302,7 @@ export default function WhackPage() {
                 : "cursor-not-allowed bg-slate-400"
             }`}
           >
-            {canRestart ? "もう一回" : "サボテン見送り中…"}
+            {canRestart ? "もう一回" : "見送り中…"}
           </button>
         </div>
       )}
@@ -307,60 +313,146 @@ export default function WhackPage() {
         </a>
       </div>
 
-      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+      {/* sky-bound cacti */}
+      <div className="pointer-events-none fixed inset-0 z-20 overflow-hidden">
         {skyCacti.map((c) => (
-          <span
+          <div
             key={c.id}
-            className="absolute animate-rise select-none"
+            className={`absolute saboten-${c.variant}`}
             style={{
               left: `${c.x}%`,
-              bottom: "-60px",
-              fontSize: `${c.size}px`,
+              bottom: "-80px",
               animationDelay: `${c.delay}s`,
+              animationDuration: `${c.duration}s`,
             }}
           >
-            🌵
-          </span>
+            <div
+              className="saboten-spin"
+              style={{
+                animationDuration: `${2 + Math.random() * 2}s`,
+                animationDirection: c.spinDir > 0 ? "normal" : "reverse",
+              }}
+            >
+              <CactusFace face={c.face} size={c.size} />
+            </div>
+          </div>
         ))}
       </div>
 
+      {/* narration */}
+      {showNarration && (
+        <div className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-6">
+          <div className="rounded-2xl bg-black/70 px-6 py-4 text-center text-lg font-bold text-white shadow-2xl backdrop-blur saboten-narration sm:text-2xl">
+            …こうして、サボテンたちは空へと帰っていった。
+          </div>
+        </div>
+      )}
+
       <style jsx global>{`
         @keyframes hit {
-          0% {
-            opacity: 0;
-            transform: scale(0.5) translateY(0);
-          }
-          30% {
-            opacity: 1;
-            transform: scale(1.4) translateY(-10px);
-          }
-          100% {
-            opacity: 0;
-            transform: scale(1) translateY(-40px);
-          }
+          0% { opacity: 0; transform: scale(0.5) translateY(0); }
+          30% { opacity: 1; transform: scale(1.4) translateY(-10px); }
+          100% { opacity: 0; transform: scale(1) translateY(-40px); }
         }
-        .animate-hit {
-          animation: hit 0.6s ease-out forwards;
+        .animate-hit { animation: hit 0.6s ease-out forwards; }
+
+        /* base spin/wobble for inner element */
+        @keyframes saboten-spin {
+          0% { transform: rotate(-15deg); }
+          50% { transform: rotate(15deg); }
+          100% { transform: rotate(-15deg); }
+        }
+        .saboten-spin {
+          animation-name: saboten-spin;
+          animation-iteration-count: infinite;
+          animation-timing-function: ease-in-out;
         }
 
-        @keyframes rise {
-          0% {
-            opacity: 0;
-            transform: translateY(0) rotate(0deg);
-          }
-          15% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 0.8;
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-110vh) rotate(360deg);
-          }
+        /* zigzag rise */
+        @keyframes saboten-zigzag {
+          0% { transform: translate(0, 0); opacity: 0; }
+          10% { opacity: 1; }
+          25% { transform: translate(40px, -25vh); }
+          50% { transform: translate(-40px, -50vh); }
+          75% { transform: translate(40px, -75vh); }
+          90% { opacity: 1; }
+          100% { transform: translate(0, -110vh); opacity: 0; }
         }
-        .animate-rise {
-          animation: rise 4.5s linear forwards;
+        .saboten-rise-zigzag {
+          animation-name: saboten-zigzag;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
+        }
+
+        /* gentle wobble rise */
+        @keyframes saboten-wobble {
+          0% { transform: translate(0, 0); opacity: 0; }
+          10% { opacity: 1; }
+          20% { transform: translate(15px, -20vh); }
+          40% { transform: translate(-15px, -40vh); }
+          60% { transform: translate(15px, -60vh); }
+          80% { transform: translate(-15px, -80vh); }
+          90% { opacity: 1; }
+          100% { transform: translate(0, -110vh); opacity: 0; }
+        }
+        .saboten-rise-wobble {
+          animation-name: saboten-wobble;
+          animation-timing-function: ease-in-out;
+          animation-fill-mode: forwards;
+        }
+
+        /* spin rise */
+        @keyframes saboten-spin-rise {
+          0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translate(0, -110vh) rotate(720deg); opacity: 0; }
+        }
+        .saboten-rise-spin {
+          animation-name: saboten-spin-rise;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
+        }
+
+        /* pause-and-go: rises, stops, wiggles, zooms */
+        @keyframes saboten-pause {
+          0% { transform: translate(0, 0); opacity: 0; }
+          8% { opacity: 1; }
+          25% { transform: translate(0, -25vh); }
+          35% { transform: translate(8px, -25vh); }
+          45% { transform: translate(-8px, -25vh); }
+          55% { transform: translate(0, -25vh); }
+          80% { transform: translate(0, -60vh); }
+          100% { transform: translate(0, -110vh); opacity: 0; }
+        }
+        .saboten-rise-pause {
+          animation-name: saboten-pause;
+          animation-timing-function: cubic-bezier(0.4, 0.1, 0.6, 0.9);
+          animation-fill-mode: forwards;
+        }
+
+        /* lazy drift: slow upward, big horizontal sway */
+        @keyframes saboten-drift {
+          0% { transform: translate(0, 0); opacity: 0; }
+          10% { opacity: 1; }
+          50% { transform: translate(60px, -55vh); }
+          100% { transform: translate(-30px, -110vh); opacity: 0; }
+        }
+        .saboten-rise-drift {
+          animation-name: saboten-drift;
+          animation-timing-function: ease-in-out;
+          animation-fill-mode: forwards;
+        }
+
+        /* narration fade */
+        @keyframes narration {
+          0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+          15% { opacity: 1; transform: translateY(0) scale(1); }
+          85% { opacity: 1; transform: translateY(0) scale(1); }
+          100% { opacity: 0; transform: translateY(-10px) scale(1); }
+        }
+        .saboten-narration {
+          animation: narration 5s ease-in-out forwards;
         }
       `}</style>
     </main>
