@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import { Cinzel, UnifrakturMaguntia, EB_Garamond } from "next/font/google";
+import { Cinzel, Poiret_One, EB_Garamond } from "next/font/google";
 import "./globals.css";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-cinzel",
   display: "swap",
 });
 
-const blackletter = UnifrakturMaguntia({
+const poiret = Poiret_One({
   subsets: ["latin"],
   weight: ["400"],
-  variable: "--font-blackletter",
+  variable: "--font-poiret",
   display: "swap",
 });
 
@@ -25,9 +25,8 @@ const garamond = EB_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Grand Tour of Europa · MMXXVI",
-  description:
-    "Copenhagen → Prague → Vienna → Salzburg · 2026 Anno Domini",
+  title: "Le Grand Tour · MMXXVI",
+  description: "Copenhagen · Prague · Vienna · Salzburg",
 };
 
 export default function RootLayout({
@@ -38,9 +37,11 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${cinzel.variable} ${blackletter.variable} ${garamond.variable}`}
+      className={`${cinzel.variable} ${poiret.variable} ${garamond.variable}`}
     >
-      <body className="antialiased text-[#3a2416]">{children}</body>
+      <body className="antialiased bg-[#0b1828] text-[#ecd9b0]">
+        {children}
+      </body>
     </html>
   );
 }

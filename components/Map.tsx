@@ -95,8 +95,9 @@ export default function MapView({ selectedDate, focusedKey }: Props) {
       className="h-full w-full"
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        subdomains="abcd"
       />
       <FitBounds markers={markers} />
       {legs.map((leg, i) => (
@@ -104,10 +105,10 @@ export default function MapView({ selectedDate, focusedKey }: Props) {
           key={i}
           positions={[leg.from, leg.to]}
           pathOptions={{
-            color: leg.color,
-            weight: 3,
-            opacity: 0.7,
-            dashArray: "6 8",
+            color: "#e8c572",
+            weight: 2.5,
+            opacity: 0.85,
+            dashArray: "8 6",
           }}
         />
       ))}

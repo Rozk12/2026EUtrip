@@ -2,7 +2,6 @@
 
 import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
 import { useTrip } from "@/components/TripContext";
-import { toRoman } from "@/lib/roman";
 
 interface Props {
   selectedDate: string | "all";
@@ -12,7 +11,27 @@ interface Props {
 
 const weekday = (iso: string) => {
   const d = new Date(iso + "T00:00:00");
-  return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()];
+  return ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][d.getDay()];
+};
+
+const shortDate = (iso: string) => {
+  // "2026-04-28" -> "APR 28"
+  const MONTHS = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+  const [, mm, dd] = iso.split("-");
+  return `${MONTHS[Number(mm) - 1]} ${dd}`;
 };
 
 export default function Itinerary({
@@ -27,115 +46,101 @@ export default function Itinerary({
       : trip.itinerary.filter((d) => d.date === selectedDate);
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="border-b border-[rgba(122,29,29,0.25)] px-5 pb-4 pt-5 parchment">
-        <div className="text-[10px] tracking-[0.35em] text-[var(--gold)] font-title">
-          ANNO DOMINI · MMXXVI
+    <div className="flex h-full flex-col bg-[var(--midnight)]">
+      <header className="px-5 pb-5 pt-6">
+        <div className="deco-ornament">
+          <span className="chevron-label">MMXXVI</span>
         </div>
-        <h1 className="mt-1 font-blackletter text-3xl leading-tight text-[var(--burgundy)] sm:text-4xl">
-          Grand Tour of Europa
+        <h1 className="mt-3 text-center font-deco text-[34px] font-normal leading-none text-[var(--gold)] sm:text-[42px]">
+          Le Grand Tour
         </h1>
-        <div className="mt-2 flex items-center gap-2 text-xs italic text-[var(--ink-soft)]">
-          <span>{trip.trip.period.start}</span>
-          <span className="text-[var(--gold)]">⚜</span>
-          <span>{trip.trip.period.end}</span>
+        <div className="mt-2 text-center font-title text-[10px] tracking-[0.45em] text-[var(--cream-soft)]">
+          COPENHAGEN &nbsp;·&nbsp; PRAGUE &nbsp;·&nbsp; VIENNA &nbsp;·&nbsp;
+          SALZBURG
         </div>
-        <div className="mt-1 text-[11px] tracking-wider text-[var(--ink-soft)]">
+        <div className="deco-ornament mt-3">
+          <span className="chevron-label">
+            {trip.trip.period.start} &nbsp;◆&nbsp; {trip.trip.period.end}
+          </span>
+        </div>
+        <div className="mt-2 text-center font-body text-[11px] italic tracking-wider text-[var(--cream-soft)]">
           {trip.trip.travelers.join(" & ")}
         </div>
       </header>
 
-      <div className="overflow-x-auto border-b border-[rgba(122,29,29,0.15)] parchment">
-        <div className="flex gap-1 px-3 py-2">
+      <div className="overflow-x-auto border-y border-[rgba(212,168,75,0.25)] bg-[var(--night)]">
+        <div className="flex gap-1 px-3 py-2.5">
           <button
-            className={`rounded-full border px-3 py-1 text-[11px] whitespace-nowrap font-title tracking-widest ${
-              selectedDate === "all"
-                ? "border-[var(--burgundy)] bg-[var(--burgundy)] text-[#f3e7c9]"
-                : "border-[rgba(122,29,29,0.3)] text-[var(--ink-soft)] hover:bg-[rgba(168,128,47,0.15)]"
-            }`}
+            className="gold-border-btn rounded-sm px-3 py-1.5 text-[10px] font-title whitespace-nowrap"
+            data-active={selectedDate === "all"}
             onClick={() => onSelectDate("all")}
           >
-            OMNIA
+            TOUT
           </button>
-          {trip.itinerary.map((d, i) => {
+          {trip.itinerary.map((d) => {
             const active = selectedDate === d.date;
-            const color = cityColor(d.city);
-            const roman = toRoman(i + 1);
             return (
               <button
                 key={d.date}
-                className={`rounded-full border px-3 py-1 text-[11px] whitespace-nowrap font-title tracking-widest ${
-                  active
-                    ? "text-[#f3e7c9]"
-                    : "border-[rgba(122,29,29,0.3)] text-[var(--ink-soft)] hover:bg-[rgba(168,128,47,0.15)]"
-                }`}
-                style={
-                  active
-                    ? {
-                        backgroundColor: color,
-                        borderColor: color,
-                      }
-                    : undefined
-                }
+                className="gold-border-btn rounded-sm px-3 py-1.5 text-[10px] font-title whitespace-nowrap"
+                data-active={active}
                 onClick={() => onSelectDate(d.date)}
                 title={d.city}
               >
-                {roman}
+                {shortDate(d.date)}
               </button>
             );
           })}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-[var(--parchment)]">
-        <ol className="divide-y divide-[rgba(122,29,29,0.15)]">
-          {days.map((d, i) => {
+      <div className="flex-1 overflow-y-auto">
+        <ol>
+          {days.map((d) => {
             const markers = buildMarkersForDate(trip, d.date);
             const color = cityColor(d.city);
-            const dayIdx = trip.itinerary.findIndex(
-              (x) => x.date === d.date,
-            );
             return (
-              <li key={d.date} className="bg-transparent">
-                <div
-                  className="flex items-center gap-3 px-5 py-3"
-                  style={{
-                    borderLeft: `4px solid ${color}`,
-                    background:
-                      "linear-gradient(90deg, rgba(168,128,47,0.08), transparent 60%)",
-                  }}
-                >
-                  <div className="wax-seal">{toRoman(dayIdx + 1)}</div>
-                  <div className="flex-1">
-                    <div className="font-title text-[13px] tracking-widest text-[var(--ink)]">
-                      DIES · {d.date}
-                      <span className="mx-2 text-[var(--gold)]">·</span>
-                      <span className="text-[var(--ink-soft)]">
-                        {weekday(d.date)}
-                      </span>
+              <li
+                key={d.date}
+                className="border-b border-[rgba(212,168,75,0.12)]"
+              >
+                <div className="flex items-center gap-4 px-5 py-3">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="font-deco text-[22px] leading-none text-[var(--gold)]">
+                      {shortDate(d.date).split(" ")[1]}
                     </div>
-                    <div className="text-[12px] italic text-[var(--ink-soft)]">
-                      {d.city}
+                    <div className="font-title text-[9px] tracking-widest text-[var(--cream-soft)]">
+                      {shortDate(d.date).split(" ")[0]} · {weekday(d.date)}
+                    </div>
+                  </div>
+                  <div
+                    className="h-8 w-[2px]"
+                    style={{ background: color }}
+                  />
+                  <div className="flex-1">
+                    <div className="font-title text-[11px] tracking-[0.3em] text-[var(--cream)]">
+                      {d.city.toUpperCase()}
                     </div>
                   </div>
                 </div>
+
                 {markers.length === 0 ? (
-                  <div className="px-5 py-3 text-[11px] italic text-[var(--ink-soft)]">
-                    — nulla res agitur （予定なし・滞在中）—
+                  <div className="px-5 pb-4 text-[11px] italic text-[var(--cream-soft)] opacity-70">
+                    — repos （予定なし・滞在中）—
                   </div>
                 ) : (
-                  <ul className="divide-y divide-[rgba(122,29,29,0.12)]">
+                  <ul className="pb-2">
                     {markers.map((m) => (
                       <li key={m.key}>
                         <button
-                          className="flex w-full items-start gap-3 px-5 py-3 text-left transition hover:bg-[rgba(168,128,47,0.1)]"
+                          className="flex w-full items-start gap-3 px-5 py-2.5 text-left transition hover:bg-[rgba(212,168,75,0.06)]"
                           onClick={() => onFocus(m.key)}
                         >
-                          <div className="w-12 shrink-0 text-sm font-title tracking-wider text-[var(--ink-soft)]">
+                          <div className="w-12 shrink-0 font-title text-[11px] tracking-wider text-[var(--cream-soft)]">
                             {m.time ?? "—"}
                           </div>
                           <div
-                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm ring-2 ring-[var(--parchment)]"
+                            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs ring-2 ring-[var(--midnight)]"
                             style={{
                               backgroundColor: cityColor(m.city),
                               color: "white",
@@ -144,11 +149,11 @@ export default function Itinerary({
                             {typeIcon[m.itemType]}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="truncate text-[13px] font-medium text-[var(--ink)]">
+                            <div className="truncate text-[13px] font-medium text-[var(--cream)]">
                               {m.label}
                             </div>
                             {m.sub && (
-                              <div className="truncate text-[11px] italic text-[var(--ink-soft)]">
+                              <div className="truncate text-[11px] italic text-[var(--cream-soft)]">
                                 {m.sub}
                               </div>
                             )}
@@ -161,7 +166,7 @@ export default function Itinerary({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="inline-flex items-center rounded-sm border border-[var(--burgundy)] bg-[rgba(122,29,29,0.08)] px-2 py-0.5 text-[10px] font-title tracking-wider text-[var(--burgundy)] hover:bg-[rgba(122,29,29,0.15)]"
+                                    className="inline-flex items-center rounded-sm border border-[var(--gold)] px-2 py-0.5 text-[10px] font-title tracking-wider text-[var(--gold)] hover:bg-[rgba(232,197,114,0.1)]"
                                   >
                                     {doc.label}
                                   </a>
@@ -178,8 +183,8 @@ export default function Itinerary({
             );
           })}
         </ol>
-        <div className="gilded-rule py-4 text-[10px] tracking-[0.4em]">
-          ⚜ FINIS ⚜
+        <div className="deco-ornament px-6 py-5 text-[10px] tracking-[0.45em]">
+          FIN DU VOYAGE
         </div>
       </div>
     </div>
