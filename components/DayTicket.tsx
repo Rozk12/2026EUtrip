@@ -109,7 +109,7 @@ export default function DayTicket({
       style={{ WebkitOverflowScrolling: "touch" }}
     >
       {/* ticket card */}
-      <div className="ticket relative flex w-full max-w-md flex-col">
+      <div className="ticket relative flex w-full max-w-md shrink-0 flex-col">
         {/* top band: route */}
         <div className="flex items-end justify-between border-b border-dashed border-[rgba(212,168,75,0.35)] px-5 pt-5 pb-3">
           {route ? (
@@ -318,7 +318,7 @@ export default function DayTicket({
       </div>
 
       {/* country silhouette in the empty space below the ticket */}
-      <div className="mt-4 w-full max-w-md opacity-90">
+      <div className="mt-4 w-full max-w-md shrink-0 opacity-90">
         <div className="mb-1 flex items-center justify-between px-1">
           <span className="chevron-label">LAND</span>
           <span className="font-title text-[8px] tracking-[0.3em] text-[var(--cream-soft)]">
