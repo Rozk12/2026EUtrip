@@ -61,6 +61,13 @@ export default function TripApp({ initialTrip }: Props) {
         <div className="pointer-events-none absolute right-2 top-2 rounded bg-white/80 px-2 py-1 text-[10px] text-slate-600 shadow">
           source: {source}
         </div>
+        <a
+          href="/saboten/game"
+          aria-label="サボテン叩きゲーム"
+          className="absolute bottom-4 right-4 z-[1000] flex h-12 w-12 items-center justify-center rounded-full bg-white text-2xl shadow-lg transition hover:scale-110 hover:bg-emerald-50 active:scale-95"
+        >
+          🌵
+        </a>
       </main>
     </TripProvider>
   );

@@ -194,11 +194,8 @@ export default function WhackPage() {
       )}
 
       <div className="mt-auto flex gap-4 pt-4 text-xs text-slate-500">
-        <a href="/saboten" className="underline hover:text-slate-700">
-          発券機に戻る
-        </a>
         <a href="/" className="underline hover:text-slate-700">
-          旅程マップ
+          ← 旅程マップに戻る
         </a>
       </div>
 
