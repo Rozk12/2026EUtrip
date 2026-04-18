@@ -20,7 +20,7 @@ type LandmarkKey =
   | "plane-up"
   | "plane-down"
   | "crown"
-  | "mermaid"
+  | "rosenborg"
   | "nyhavn"
   | "violin"
   | "astroclock"
@@ -50,7 +50,7 @@ const DATE_STAMPS: Record<string, StampConfig> = {
     city: "KØBENHAVN",
     country: "ANKOMST · DK",
     color: "#c8102e",
-    landmark: "mermaid",
+    landmark: "rosenborg",
   },
   "2026-04-27": {
     city: "KØBENHAVN",
@@ -168,20 +168,49 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
           <rect x="-22" y="8" width="44" height="3.5" />
         </g>
       );
-    case "mermaid":
-      // Little Mermaid silhouette on rock
+    case "rosenborg":
+      // Rosenborg Slot — Danish Renaissance castle silhouette (3 spires)
       return (
-        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
-          {/* rock */}
-          <path d="M-22,14 Q-16,8 -8,8 Q8,6 18,10 Q22,13 22,16 L-22,16 Z" />
-          {/* body sitting */}
-          <circle cx="0" cy="-8" r="4" />
-          <path d="M-3,-5 Q-6,0 -4,5 Q-2,7 2,7 Q6,5 6,0 Q4,-5 3,-5 Z" />
-          {/* arms */}
-          <path d="M-4,0 Q-10,2 -8,6" strokeWidth="1.2" fill="none" />
-          <path d="M4,0 Q10,2 8,6" strokeWidth="1.2" fill="none" />
-          {/* tail curl */}
-          <path d="M0,7 Q-6,11 -4,14 Q0,12 4,14 Q10,12 8,7" fill="currentColor" />
+        <g fill="currentColor" stroke="currentColor" strokeLinejoin="round" strokeWidth="0.6">
+          {/* main central building */}
+          <rect x="-10" y="-4" width="20" height="16" />
+          {/* left side tower */}
+          <rect x="-15" y="-9" width="5" height="21" />
+          {/* right side tower */}
+          <rect x="10" y="-9" width="5" height="21" />
+          {/* left bulb + spire */}
+          <circle cx="-12.5" cy="-12" r="2.6" />
+          <path d="M-15,-11 L-12.5,-20 L-10,-11 Z" />
+          <line x1="-12.5" y1="-20" x2="-12.5" y2="-22" strokeWidth="0.7" />
+          <circle cx="-12.5" cy="-22.5" r="0.7" />
+          {/* right bulb + spire */}
+          <circle cx="12.5" cy="-12" r="2.6" />
+          <path d="M10,-11 L12.5,-20 L15,-11 Z" />
+          <line x1="12.5" y1="-20" x2="12.5" y2="-22" strokeWidth="0.7" />
+          <circle cx="12.5" cy="-22.5" r="0.7" />
+          {/* central taller spire */}
+          <rect x="-3" y="-10" width="6" height="6" />
+          <circle cx="0" cy="-13" r="3" />
+          <path d="M-3,-13 L0,-24 L3,-13 Z" />
+          <line x1="0" y1="-24" x2="0" y2="-26.5" strokeWidth="0.7" />
+          <circle cx="0" cy="-27" r="0.8" />
+          {/* warm windows lit in main building */}
+          {[-7, -3.5, 0, 3.5, 6.5].map((x, i) => (
+            <rect
+              key={i}
+              x={x}
+              y="0"
+              width="1.8"
+              height="3"
+              fill="#f7e8a8"
+              stroke="none"
+            />
+          ))}
+          {/* archways on ground level */}
+          <rect x="-5" y="6" width="3" height="6" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.4" />
+          <rect x="2" y="6" width="3" height="6" fill="#f7e8a8" stroke="currentColor" strokeWidth="0.4" />
+          {/* base line */}
+          <line x1="-16" y1="12" x2="16" y2="12" strokeWidth="1" />
         </g>
       );
     case "nyhavn":
@@ -204,17 +233,105 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
         </g>
       );
     case "violin":
+      // Proper violin: figure-8 body, neck, scroll, f-holes, bridge, bow
       return (
-        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
-          {/* body */}
-          <path d="M-8,-18 Q-4,-22 0,-22 Q4,-22 8,-18 L6,-8 Q10,-4 10,4 Q10,14 0,14 Q-10,14 -10,4 Q-10,-4 -6,-8 Z" />
-          {/* strings */}
-          <path d="M-2,-20 L-2,13 M2,-20 L2,13" stroke="var(--gold,white)" strokeWidth="0.6" fill="none" opacity="0.7" />
-          {/* f-hole */}
-          <path d="M-6,2 Q-6,6 -4,6" strokeWidth="1" fill="none" />
-          <path d="M6,2 Q6,6 4,6" strokeWidth="1" fill="none" />
-          {/* bow */}
-          <path d="M14,-10 L24,16" strokeWidth="1.2" fill="none" />
+        <g fill="currentColor" stroke="currentColor" strokeLinejoin="round" strokeWidth="0.6">
+          {/* body — figure-8 hourglass */}
+          <path
+            d="
+              M 0,-16
+              C 5,-16 8,-14 8,-10
+              C 8,-7 6,-6 5,-5
+              C 6,-3 10,-1 10,3
+              C 10,9 6,13 0,14
+              C -6,13 -10,9 -10,3
+              C -10,-1 -6,-3 -5,-5
+              C -6,-6 -8,-7 -8,-10
+              C -8,-14 -5,-16 0,-16
+              Z
+            "
+          />
+          {/* neck (fingerboard) */}
+          <rect x="-1.8" y="-22" width="3.6" height="7" fill="#3a2416" opacity="0.0" />
+          <rect x="-1.5" y="-21" width="3" height="6" fill="currentColor" />
+          <rect x="-1" y="-21" width="2" height="6" fill="#f7e8a8" stroke="none" />
+
+          {/* scroll (spiral at top of neck) */}
+          <g>
+            <path
+              d="M 0,-22 C 2,-22 2,-25 0,-25 C -2,-25 -2,-22 0,-22 Z"
+              fill="currentColor"
+            />
+            <circle cx="0" cy="-23.5" r="0.6" fill="#f7e8a8" stroke="none" />
+          </g>
+          <rect x="-1.4" y="-22" width="2.8" height="1.4" fill="currentColor" />
+
+          {/* strings — 4 thin lines */}
+          <g stroke="#f7e8a8" strokeWidth="0.35" fill="none" opacity="0.95">
+            <line x1="-1.2" y1="-21" x2="-1.2" y2="8" />
+            <line x1="-0.4" y1="-21" x2="-0.4" y2="8" />
+            <line x1="0.4" y1="-21" x2="0.4" y2="8" />
+            <line x1="1.2" y1="-21" x2="1.2" y2="8" />
+          </g>
+
+          {/* f-holes on either side of the waist */}
+          <path
+            d="M -4.2,-2 C -4.2,2 -3.2,5 -4.2,8"
+            stroke="#f7e8a8"
+            strokeWidth="1"
+            fill="none"
+          />
+          <path
+            d="M 4.2,-2 C 4.2,2 3.2,5 4.2,8"
+            stroke="#f7e8a8"
+            strokeWidth="1"
+            fill="none"
+          />
+          <circle cx="-4.2" cy="-2" r="0.5" fill="#f7e8a8" stroke="none" />
+          <circle cx="-4.2" cy="8" r="0.5" fill="#f7e8a8" stroke="none" />
+          <circle cx="4.2" cy="-2" r="0.5" fill="#f7e8a8" stroke="none" />
+          <circle cx="4.2" cy="8" r="0.5" fill="#f7e8a8" stroke="none" />
+
+          {/* bridge */}
+          <rect
+            x="-2.5"
+            y="4"
+            width="5"
+            height="1.2"
+            fill="#f7e8a8"
+            stroke="currentColor"
+            strokeWidth="0.4"
+          />
+
+          {/* tailpiece */}
+          <path
+            d="M -2,7 L 2,7 L 1.5,12 L -1.5,12 Z"
+            fill="#f7e8a8"
+            stroke="currentColor"
+            strokeWidth="0.4"
+          />
+
+          {/* bow — diagonal beside the violin */}
+          <g transform="rotate(82 15 0)">
+            <line
+              x1="-14"
+              y1="0"
+              x2="14"
+              y2="0"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <line
+              x1="-14"
+              y1="0.5"
+              x2="14"
+              y2="0.5"
+              stroke="#f7e8a8"
+              strokeWidth="0.5"
+            />
+            <rect x="-14.6" y="-1.2" width="1.6" height="2.6" fill="currentColor" />
+            <rect x="13" y="-0.8" width="1.8" height="1.6" fill="currentColor" />
+          </g>
         </g>
       );
     case "astroclock":
