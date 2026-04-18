@@ -7,15 +7,11 @@ import { DAD_QUOTES } from "@/data/dad-quotes";
 const SKIP_AFTER_SECONDS = 5;
 
 export default function PapaPage() {
-  const [idx, setIdx] = useState(0);
+  const [quote, setQuote] = useState(DAD_QUOTES[0]);
   const [countdown, setCountdown] = useState(SKIP_AFTER_SECONDS);
 
-  const quote = DAD_QUOTES[idx];
-  const isLast = idx === DAD_QUOTES.length - 1;
-  const canSkip = countdown <= 0;
-
   useEffect(() => {
-    setCountdown(SKIP_AFTER_SECONDS);
+    setQuote(DAD_QUOTES[Math.floor(Math.random() * DAD_QUOTES.length)]);
     const t = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
@@ -26,35 +22,23 @@ export default function PapaPage() {
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [idx]);
+  }, []);
 
-  const next = () => {
+  const canSkip = countdown <= 0;
+
+  const skip = () => {
     if (!canSkip) return;
-    if (isLast) {
-      window.location.href = "/";
-    } else {
-      setIdx((i) => i + 1);
-    }
+    window.location.href = "/";
   };
 
   return (
     <main className="flex min-h-screen flex-col bg-black text-white">
-      {/* progress header */}
+      {/* top header */}
       <div className="flex items-center justify-between px-4 py-3 text-xs text-slate-400">
         <span className="rounded bg-slate-800 px-2 py-0.5 font-medium">
           広告
         </span>
-        <span>
-          {idx + 1} / {DAD_QUOTES.length}
-        </span>
-      </div>
-
-      {/* thin progress bar */}
-      <div className="h-0.5 w-full bg-slate-800">
-        <div
-          className="h-full bg-amber-400 transition-all"
-          style={{ width: `${((idx + 1) / DAD_QUOTES.length) * 100}%` }}
-        />
+        <span className="opacity-60">#{String(quote.id).padStart(2, "0")}</span>
       </div>
 
       {/* main ad body */}
@@ -82,7 +66,7 @@ export default function PapaPage() {
       {/* skip button */}
       <div className="flex justify-end p-4">
         <button
-          onClick={next}
+          onClick={skip}
           disabled={!canSkip}
           className={`flex items-center gap-2 rounded border px-4 py-2 text-sm font-medium transition ${
             canSkip
@@ -91,9 +75,7 @@ export default function PapaPage() {
           }`}
         >
           {canSkip ? (
-            <>
-              {isLast ? "閉じる" : "広告をスキップ"} <span>›››</span>
-            </>
+            <>広告をスキップ <span>›››</span></>
           ) : (
             <>{countdown} 秒後にスキップできます</>
           )}
