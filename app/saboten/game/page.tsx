@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import CactusFace, { type Face } from "@/components/CactusFace";
 
 const HOLES = 9;
-const GAME_SECONDS = 30;
-const SPAWN_START_MS = 700;
-const SPAWN_END_MS = 350;
+const GAME_SECONDS = 15;
+const SPAWN_START_MS = 750;
+const SPAWN_END_MS = 180;
 const SHOW_START_MS = 1200;
-const SHOW_END_MS = 700;
-const DOUBLE_SPAWN_AFTER_S = 15;
+const SHOW_END_MS = 480;
+const DOUBLE_SPAWN_AFTER_S = 7;
+const DIFFICULTY_CURVE = 2.2; // >1 means back-loaded (easy start, hard finish)
 
 const FACES: Face[] = ["sad", "dizzy", "silly", "angry", "shock", "wink"];
 const RISE_VARIANTS = [
@@ -75,15 +76,13 @@ export default function WhackPage() {
     tickRef.current = null;
   };
 
-  const showMs = () => {
-    const t = Math.min(elapsedRef.current / GAME_SECONDS, 1);
-    return lerp(SHOW_START_MS, SHOW_END_MS, t);
+  const curvedT = () => {
+    const raw = Math.min(elapsedRef.current / GAME_SECONDS, 1);
+    return Math.pow(raw, DIFFICULTY_CURVE);
   };
 
-  const spawnDelay = () => {
-    const t = Math.min(elapsedRef.current / GAME_SECONDS, 1);
-    return lerp(SPAWN_START_MS, SPAWN_END_MS, t);
-  };
+  const showMs = () => lerp(SHOW_START_MS, SHOW_END_MS, curvedT());
+  const spawnDelay = () => lerp(SPAWN_START_MS, SPAWN_END_MS, curvedT());
 
   const spawnOne = () => {
     setHoles((prev) => {
@@ -105,8 +104,11 @@ export default function WhackPage() {
   const scheduleSpawn = () => {
     spawnRef.current = setTimeout(() => {
       spawnOne();
-      if (elapsedRef.current >= DOUBLE_SPAWN_AFTER_S && Math.random() < 0.3) {
-        setTimeout(spawnOne, 60);
+      if (elapsedRef.current >= DOUBLE_SPAWN_AFTER_S) {
+        const prob = 0.3 + curvedT() * 0.4;
+        if (Math.random() < prob) setTimeout(spawnOne, 60);
+        if (curvedT() > 0.7 && Math.random() < 0.25)
+          setTimeout(spawnOne, 140);
       }
       scheduleSpawn();
     }, spawnDelay());
@@ -293,17 +295,25 @@ export default function WhackPage() {
             <span>最大コンボ: {bestCombo}</span>
             <span>見逃し: {missed}</span>
           </div>
-          <button
-            onClick={canRestart ? start : undefined}
-            disabled={!canRestart}
-            className={`mt-2 rounded-full px-6 py-3 text-base font-bold text-white shadow transition active:scale-95 ${
-              canRestart
-                ? "bg-emerald-600 hover:bg-emerald-700"
-                : "cursor-not-allowed bg-slate-400"
-            }`}
-          >
-            {canRestart ? "もう一回" : "見送り中…"}
-          </button>
+          <div className="flex flex-col items-center gap-2">
+            <button
+              onClick={canRestart ? start : undefined}
+              disabled={!canRestart}
+              className={`mt-2 rounded-full px-6 py-3 text-base font-bold text-white shadow transition active:scale-95 ${
+                canRestart
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "cursor-not-allowed bg-slate-400"
+              }`}
+            >
+              {canRestart ? "もう一回" : "見送り中…"}
+            </button>
+            <a
+              href="/papa"
+              className="animate-pulse rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-rose-500 px-6 py-3 text-base font-bold text-white shadow-lg ring-4 ring-amber-300"
+            >
+              🎁 ご褒美を受け取る 🎁
+            </a>
+          </div>
         </div>
       )}
 
