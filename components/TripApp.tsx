@@ -154,18 +154,7 @@ export default function TripApp({ initialTrip }: Props) {
           <div className="relative h-full w-full bg-[var(--midnight)]">
             <MapView selectedDate={currentDate ?? "all"} focusedKey={focusedKey} />
 
-            {/* top-left back button (thumb-reach on mobile phones held left-handed) */}
-            <button
-              onClick={() => {
-                setMapOpen(false);
-                setFocusedKey(null);
-              }}
-              className="absolute left-3 top-3 z-[2000] flex h-11 items-center gap-2 border border-[var(--gold)] bg-[rgba(11,24,40,0.92)] px-4 font-title text-[11px] tracking-[0.35em] text-[var(--gold)] shadow-lg backdrop-blur hover:bg-[rgba(212,168,75,0.12)] active:scale-95"
-            >
-              <span className="text-base leading-none">←</span> TILBAGE
-            </button>
-
-            <div className="pointer-events-none absolute right-3 top-3 z-[2000] border border-[rgba(212,168,75,0.5)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 font-title text-[10px] tracking-[0.4em] text-[var(--gold)] shadow backdrop-blur">
+            <div className="pointer-events-none absolute left-3 top-3 z-[2000] border border-[rgba(212,168,75,0.5)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 font-title text-[10px] tracking-[0.4em] text-[var(--gold)] shadow backdrop-blur">
               EUROPAKORT
             </div>
 
