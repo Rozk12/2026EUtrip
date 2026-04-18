@@ -39,7 +39,7 @@ export default function PapaPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-black text-white">
+    <main className="flex h-[100dvh] flex-col bg-black text-white">
       {/* top header */}
       <div className="flex items-center justify-between px-4 py-3 text-xs text-slate-400">
         <span className="rounded bg-slate-800 px-2 py-0.5 font-medium">
@@ -49,7 +49,7 @@ export default function PapaPage() {
       </div>
 
       {/* main ad body */}
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-6">
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 overflow-y-auto px-4 py-4">
         {/* speech bubble */}
         <div className="relative w-full max-w-md rounded-3xl bg-white px-5 py-5 text-slate-900 shadow-2xl">
           <div className="mb-3 text-[10px] font-medium uppercase tracking-[0.2em] text-amber-600">
@@ -68,7 +68,7 @@ export default function PapaPage() {
         </div>
 
         {/* namazu */}
-        <div className="ml-4 h-24 w-24 self-start overflow-hidden rounded-full ring-4 ring-amber-400 sm:h-32 sm:w-32">
+        <div className="ml-4 h-20 w-20 shrink-0 self-start overflow-hidden rounded-full ring-4 ring-amber-400 sm:h-28 sm:w-28">
           <Image
             src="/assets/dad-namazu.png"
             alt=""
@@ -81,7 +81,7 @@ export default function PapaPage() {
       </div>
 
       {/* skip button */}
-      <div className="flex justify-end p-4">
+      <div className="flex shrink-0 justify-end bg-black p-4">
         <button
           onClick={skip}
           disabled={!canSkip}
