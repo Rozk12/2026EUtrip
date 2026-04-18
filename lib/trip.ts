@@ -64,6 +64,8 @@ export interface Hotel {
   note?: string;
   price?: string;
   contact?: string;
+  pin?: string;
+  guestName?: string;
 }
 
 export interface TripEvent {
@@ -91,28 +93,18 @@ export interface TripData {
   trains: Train[];
   hotels: Hotel[];
   events: TripEvent[];
-  itinerary: {
-    date: string;
-    city: string;
-    events: string[];
-  }[];
+  itinerary: { date: string; city: string; events: string[] }[];
 }
 
-export const trip = raw as TripData;
+export const defaultTrip = raw as TripData;
 
 export type AnyItem = Flight | Train | Hotel | TripEvent;
-
-export const itemsById: Record<string, AnyItem> = Object.fromEntries(
-  [...trip.flights, ...trip.trains, ...trip.hotels, ...trip.events].map(
-    (i) => [i.id, i as AnyItem],
-  ),
-);
 
 export const cityColor = (name: string): string => {
   const key = name.toLowerCase();
   if (key.includes("copenhagen")) return "#1e88e5";
   if (key.includes("prague")) return "#e53935";
-  if (key.includes("vienna")) return "#8e24aa";
+  if (key.includes("vienna") || key.includes("wien")) return "#8e24aa";
   if (key.includes("salzburg")) return "#43a047";
   if (key.includes("tokyo") || key.includes("osaka")) return "#607d8b";
   return "#334155";
@@ -138,37 +130,34 @@ export interface Marker {
   date: string;
 }
 
-// Build markers attached to specific dates.
-// Flights/trains produce two markers (from on dep date, to on arr date).
-// Hotels produce one marker per night (check-in date).
-export function buildMarkersForDate(date: string): Marker[] {
+const time = (iso: string): string => iso.slice(11, 16);
+
+export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
   const markers: Marker[] = [];
 
   for (const f of trip.flights) {
-    const depDate = f.departure.slice(0, 10);
-    const arrDate = f.arrival.slice(0, 10);
-    if (depDate === date) {
+    if (f.departure.slice(0, 10) === date) {
       markers.push({
         id: f.id,
         key: `${f.id}-from`,
         itemType: "flight",
         label: `${f.from.city} (${f.from.airport}) 出発`,
         sub: `${f.airline} ${f.flightNumbers.join(" / ")} · ${f.traveler}`,
-        time: formatTime(f.departure),
+        time: time(f.departure),
         city: f.from.city,
         lat: f.from.lat,
         lng: f.from.lng,
         date,
       });
     }
-    if (arrDate === date) {
+    if (f.arrival.slice(0, 10) === date) {
       markers.push({
         id: f.id,
         key: `${f.id}-to`,
         itemType: "flight",
         label: `${f.to.city} (${f.to.airport}) 到着`,
         sub: `${f.airline} ${f.flightNumbers.join(" / ")} · ${f.traveler}`,
-        time: formatTime(f.arrival),
+        time: time(f.arrival),
         city: f.to.city,
         lat: f.to.lat,
         lng: f.to.lng,
@@ -178,30 +167,28 @@ export function buildMarkersForDate(date: string): Marker[] {
   }
 
   for (const t of trip.trains) {
-    const depDate = t.departure.slice(0, 10);
-    const arrDate = t.arrival.slice(0, 10);
-    if (depDate === date) {
+    if (t.departure.slice(0, 10) === date) {
       markers.push({
         id: t.id,
         key: `${t.id}-from`,
         itemType: "train",
         label: `${t.from.station} 出発`,
         sub: `${t.operator} ${t.trainNumber}`,
-        time: formatTime(t.departure),
+        time: time(t.departure),
         city: t.from.city,
         lat: t.from.lat,
         lng: t.from.lng,
         date,
       });
     }
-    if (arrDate === date) {
+    if (t.arrival.slice(0, 10) === date) {
       markers.push({
         id: t.id,
         key: `${t.id}-to`,
         itemType: "train",
         label: `${t.to.station} 到着`,
         sub: `${t.operator} ${t.trainNumber}`,
-        time: formatTime(t.arrival),
+        time: time(t.arrival),
         city: t.to.city,
         lat: t.to.lat,
         lng: t.to.lng,
@@ -249,10 +236,6 @@ export function buildMarkersForDate(date: string): Marker[] {
   return markers;
 }
 
-export function allMarkers(): Marker[] {
-  return trip.itinerary.flatMap((d) => buildMarkersForDate(d.date));
-}
-
-function formatTime(iso: string): string {
-  return iso.slice(11, 16);
+export function allMarkers(trip: TripData): Marker[] {
+  return trip.itinerary.flatMap((d) => buildMarkersForDate(trip, d.date));
 }

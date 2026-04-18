@@ -1,16 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Polyline,
+  Popup,
+  TileLayer,
+  useMap,
+} from "react-leaflet";
 import L from "leaflet";
 import {
   allMarkers,
   buildMarkersForDate,
   cityColor,
-  trip,
   typeIcon,
   type Marker as MarkerData,
 } from "@/lib/trip";
+import { useTrip } from "@/components/TripContext";
 
 function buildIcon(color: string, emoji: string) {
   return L.divIcon({
@@ -41,10 +48,13 @@ interface Props {
 }
 
 export default function MapView({ selectedDate, focusedKey }: Props) {
+  const trip = useTrip();
   const markers = useMemo(
     () =>
-      selectedDate === "all" ? allMarkers() : buildMarkersForDate(selectedDate),
-    [selectedDate],
+      selectedDate === "all"
+        ? allMarkers(trip)
+        : buildMarkersForDate(trip, selectedDate),
+    [trip, selectedDate],
   );
 
   const legs = useMemo(() => {
@@ -67,7 +77,7 @@ export default function MapView({ selectedDate, focusedKey }: Props) {
       });
     }
     return out;
-  }, [markers]);
+  }, [trip, markers]);
 
   const markerRefs = useRef<Record<string, L.Marker | null>>({});
 

@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  buildMarkersForDate,
-  cityColor,
-  trip,
-  typeIcon,
-} from "@/lib/trip";
+import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
+import { useTrip } from "@/components/TripContext";
 
 interface Props {
   selectedDate: string | "all";
@@ -19,6 +15,7 @@ const weekday = (iso: string) => {
 };
 
 export default function Itinerary({ selectedDate, onSelectDate, onFocus }: Props) {
+  const trip = useTrip();
   const days =
     selectedDate === "all"
       ? trip.itinerary
@@ -72,7 +69,7 @@ export default function Itinerary({ selectedDate, onSelectDate, onFocus }: Props
       <div className="flex-1 overflow-y-auto">
         <ol className="divide-y divide-slate-100">
           {days.map((d) => {
-            const markers = buildMarkersForDate(d.date);
+            const markers = buildMarkersForDate(trip, d.date);
             const color = cityColor(d.city);
             return (
               <li key={d.date} className="bg-white">

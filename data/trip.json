@@ -101,15 +101,21 @@
     {
       "id": "hotel_copenhagen",
       "type": "hotel",
-      "name": "（未定）",
+      "name": "Steel House Copenhagen",
       "city": "Copenhagen",
-      "lat": 55.6761,
-      "lng": 12.5683,
+      "address": "Herholdtsgade 6, 1605 Copenhagen, Denmark",
+      "lat": 55.6762,
+      "lng": 12.5598,
       "checkIn": "2026-04-26",
       "checkOut": "2026-04-28",
       "nights": 2,
-      "bookingRef": null,
-      "note": "未予約"
+      "bookingRef": "5981251578",
+      "pin": "8170",
+      "beds": "Triple Room（3 adults）",
+      "price": "DKK 1,790",
+      "contact": "+45 33 17 71 10",
+      "guestName": "Ozaki Aoi",
+      "note": "Aoi経由で予約（aoi25aoi@gmail.com）。4/22 23:59 CESTまで無料キャンセル可"
     },
     {
       "id": "hotel_prague",
