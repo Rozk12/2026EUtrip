@@ -60,6 +60,13 @@ export default function SabotenPage() {
         </button>
 
         <a
+          href="/saboten/game"
+          className="rounded-full bg-amber-500 px-5 py-2 text-sm font-bold text-white shadow hover:bg-amber-600"
+        >
+          🎮 サボテン叩きゲームへ
+        </a>
+
+        <a
           href="/"
           className="text-xs text-slate-500 underline hover:text-slate-700"
         >
