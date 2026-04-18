@@ -16,124 +16,312 @@ const MONTH_ROMAN = [
   "XII",
 ];
 
-interface StampInfo {
+type LandmarkKey =
+  | "plane-up"
+  | "plane-down"
+  | "crown"
+  | "mermaid"
+  | "nyhavn"
+  | "violin"
+  | "astroclock"
+  | "train"
+  | "conductor"
+  | "sachertorte"
+  | "mozart"
+  | "fortress"
+  | "fuji";
+
+interface StampConfig {
   city: string;
   country: string;
-  code: string;
   color: string;
+  landmark: LandmarkKey;
 }
 
-function stampForCity(city: string): StampInfo {
-  const k = city.toLowerCase();
+// Per-day stamps for the 2026 trip
+const DATE_STAMPS: Record<string, StampConfig> = {
+  "2026-04-25": {
+    city: "TOKYO · OSAKA",
+    country: "AFGANG",
+    color: "#8e1b25",
+    landmark: "plane-up",
+  },
+  "2026-04-26": {
+    city: "KØBENHAVN",
+    country: "ANKOMST · DK",
+    color: "#c8102e",
+    landmark: "mermaid",
+  },
+  "2026-04-27": {
+    city: "KØBENHAVN",
+    country: "DANMARK",
+    color: "#c8102e",
+    landmark: "nyhavn",
+  },
+  "2026-04-28": {
+    city: "PRAHA",
+    country: "VIVALDI · CZ",
+    color: "#1f4a8f",
+    landmark: "violin",
+  },
+  "2026-04-29": {
+    city: "PRAHA",
+    country: "ČESKO",
+    color: "#1f4a8f",
+    landmark: "astroclock",
+  },
+  "2026-04-30": {
+    city: "PRAHA → WIEN",
+    country: "REGIOJET",
+    color: "#4a3a7a",
+    landmark: "train",
+  },
+  "2026-05-01": {
+    city: "WIEN",
+    country: "MUSIKVEREIN",
+    color: "#b4412a",
+    landmark: "conductor",
+  },
+  "2026-05-02": {
+    city: "WIEN → SALZBURG",
+    country: "WESTBAHN",
+    color: "#8f3220",
+    landmark: "sachertorte",
+  },
+  "2026-05-03": {
+    city: "SALZBURG",
+    country: "MOZART · AT",
+    color: "#2f6b3a",
+    landmark: "mozart",
+  },
+  "2026-05-04": {
+    city: "SALZBURG",
+    country: "HJEMREJSE",
+    color: "#2f6b3a",
+    landmark: "plane-down",
+  },
+  "2026-05-05": {
+    city: "TOKYO",
+    country: "HJEMME · JP",
+    color: "#8e1b25",
+    landmark: "fuji",
+  },
+};
+
+function stampForDate(date: string, fallbackCity: string): StampConfig {
+  const hit = DATE_STAMPS[date];
+  if (hit) return hit;
+  // fallback: use the city
+  const k = fallbackCity.toLowerCase();
   if (k.includes("copenhagen") || k.includes("københavn"))
-    return {
-      city: "KØBENHAVN",
-      country: "DANMARK",
-      code: "DK",
-      color: "#c8102e",
-    };
+    return { city: "KØBENHAVN", country: "DANMARK", color: "#c8102e", landmark: "crown" };
   if (k.includes("prague") || k.includes("prag"))
-    return {
-      city: "PRAHA",
-      country: "ČESKO",
-      code: "CZ",
-      color: "#1f4a8f",
-    };
+    return { city: "PRAHA", country: "ČESKO", color: "#1f4a8f", landmark: "astroclock" };
   if (k.includes("vienna") || k.includes("wien"))
-    return {
-      city: "WIEN",
-      country: "ÖSTERREICH",
-      code: "AT",
-      color: "#b4412a",
-    };
+    return { city: "WIEN", country: "ÖSTERREICH", color: "#b4412a", landmark: "sachertorte" };
   if (k.includes("salzburg"))
-    return {
-      city: "SALZBURG",
-      country: "ÖSTERREICH",
-      code: "AT-S",
-      color: "#2f6b3a",
-    };
-  if (k.includes("tokyo") || k.includes("osaka") || k.includes("東京") || k.includes("大阪"))
-    return {
-      city: "TOKYO/OSAKA",
-      country: "NIPPON",
-      code: "JP",
-      color: "#8e1b25",
-    };
-  return {
-    city: city.toUpperCase(),
-    country: "",
-    code: "",
-    color: "#9c2a2a",
-  };
+    return { city: "SALZBURG", country: "ÖSTERREICH", color: "#2f6b3a", landmark: "fortress" };
+  return { city: fallbackCity.toUpperCase(), country: "", color: "#9c2a2a", landmark: "fuji" };
 }
 
-function Landmark({ code }: { code: string }) {
-  // Centered at (0,0), rough bounds -20..20
-  switch (code) {
-    case "DK":
-      // Crown silhouette (Danish royal crown)
+function Landmark({ kind }: { kind: LandmarkKey }) {
+  switch (kind) {
+    case "plane-up":
       return (
-        <g stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round">
-          <path
-            d="M-20,8 L-20,-4 L-13,4 L-5,-14 L0,-18 L5,-14 L13,4 L20,-4 L20,8 Z"
-            fill="currentColor"
-          />
-          <circle cx="-20" cy="-4" r="2.4" fill="currentColor" />
-          <circle cx="0" cy="-18" r="2.4" fill="currentColor" />
-          <circle cx="20" cy="-4" r="2.4" fill="currentColor" />
-          <rect x="-22" y="8" width="44" height="3.5" fill="currentColor" />
-          <path d="M-2,-22 L2,-22 L2,-18 L4,-18 L4,-16 L-4,-16 L-4,-18 L-2,-18 Z" fill="currentColor" />
+        <g stroke="currentColor" strokeWidth="1.4" fill="currentColor" strokeLinejoin="round">
+          {/* airplane angled up-right */}
+          <g transform="rotate(-30)">
+            <path d="M-20,0 L12,-1 L20,-4 L22,-2 L18,2 L12,1 L-20,0 Z" />
+            <path d="M-6,-1 L-12,-10 L-8,-10 L0,-1 Z" />
+            <path d="M-6,1 L-12,10 L-8,10 L0,1 Z" />
+            <path d="M10,-2 L6,-6 L9,-6 L12,-2 Z" />
+          </g>
+          {/* trail dots */}
+          <g fill="currentColor" opacity="0.5">
+            <circle cx="-22" cy="16" r="1.2" />
+            <circle cx="-16" cy="12" r="1.5" />
+            <circle cx="-10" cy="8" r="1.8" />
+          </g>
         </g>
       );
-    case "CZ":
-      // Prague Týn Church twin Gothic spires
+    case "plane-down":
+      return (
+        <g stroke="currentColor" strokeWidth="1.4" fill="currentColor" strokeLinejoin="round">
+          <g transform="rotate(25)">
+            <path d="M-22,0 L10,-1 L20,-4 L22,-2 L18,2 L10,1 L-22,0 Z" />
+            <path d="M-6,-1 L-12,-10 L-8,-10 L0,-1 Z" />
+            <path d="M-6,1 L-12,10 L-8,10 L0,1 Z" />
+            <path d="M8,-2 L4,-6 L7,-6 L10,-2 Z" />
+          </g>
+          {/* sun setting below */}
+          <circle cx="0" cy="18" r="4" fill="currentColor" opacity="0.6" />
+          <path d="M-8,18 L-22,18 M8,18 L22,18" strokeWidth="1" />
+        </g>
+      );
+    case "crown":
       return (
         <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
-          <path d="M-16,12 L-16,-3 L-11,-20 L-6,-3 L-6,12 Z" />
-          <path d="M16,12 L16,-3 L11,-20 L6,-3 L6,12 Z" />
-          <rect x="-18" y="12" width="36" height="4" />
-          <rect x="-5" y="4" width="10" height="12" />
-          <path d="M-11,-22 L-11,-24 M11,-22 L11,-24" strokeWidth="1" />
+          <path d="M-20,8 L-20,-4 L-13,4 L-5,-14 L0,-18 L5,-14 L13,4 L20,-4 L20,8 Z" />
+          <circle cx="-20" cy="-4" r="2.4" />
+          <circle cx="0" cy="-18" r="2.4" />
+          <circle cx="20" cy="-4" r="2.4" />
+          <rect x="-22" y="8" width="44" height="3.5" />
         </g>
       );
-    case "AT":
-      // Vienna Stephansdom single spire
+    case "mermaid":
+      // Little Mermaid silhouette on rock
       return (
         <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
-          <path d="M0,-22 L-3,-8 L-7,4 L-10,13 L10,13 L7,4 L3,-8 Z" />
-          <rect x="-15" y="13" width="30" height="3.5" />
-          <circle cx="0" cy="-22" r="1.2" />
-          <path d="M0,-25 L0,-22" strokeWidth="1" />
+          {/* rock */}
+          <path d="M-22,14 Q-16,8 -8,8 Q8,6 18,10 Q22,13 22,16 L-22,16 Z" />
+          {/* body sitting */}
+          <circle cx="0" cy="-8" r="4" />
+          <path d="M-3,-5 Q-6,0 -4,5 Q-2,7 2,7 Q6,5 6,0 Q4,-5 3,-5 Z" />
+          {/* arms */}
+          <path d="M-4,0 Q-10,2 -8,6" strokeWidth="1.2" fill="none" />
+          <path d="M4,0 Q10,2 8,6" strokeWidth="1.2" fill="none" />
+          {/* tail curl */}
+          <path d="M0,7 Q-6,11 -4,14 Q0,12 4,14 Q10,12 8,7" fill="currentColor" />
         </g>
       );
-    case "AT-S":
-      // Salzburg Hohensalzburg fortress on hill
+    case "nyhavn":
+      // Row of gabled colorful houses
+      return (
+        <g stroke="currentColor" strokeWidth="1.2" fill="currentColor" strokeLinejoin="round">
+          {/* house 1 */}
+          <path d="M-22,12 L-22,-2 L-16,-8 L-10,-2 L-10,12 Z" />
+          {/* house 2 */}
+          <path d="M-10,12 L-10,0 L-4,-6 L2,0 L2,12 Z" fill="none" />
+          {/* house 3 */}
+          <path d="M2,12 L2,-4 L8,-10 L14,-4 L14,12 Z" />
+          {/* house 4 */}
+          <path d="M14,12 L14,2 L18,-2 L22,2 L22,12 Z" fill="none" />
+          {/* windows */}
+          <rect x="-19" y="2" width="2" height="3" fill="white" opacity="0" stroke="currentColor" />
+          <rect x="5" y="2" width="2" height="3" fill="white" opacity="0" stroke="currentColor" />
+          {/* water line */}
+          <path d="M-22,14 L22,14" strokeWidth="0.8" />
+        </g>
+      );
+    case "violin":
+      return (
+        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
+          {/* body */}
+          <path d="M-8,-18 Q-4,-22 0,-22 Q4,-22 8,-18 L6,-8 Q10,-4 10,4 Q10,14 0,14 Q-10,14 -10,4 Q-10,-4 -6,-8 Z" />
+          {/* strings */}
+          <path d="M-2,-20 L-2,13 M2,-20 L2,13" stroke="var(--gold,white)" strokeWidth="0.6" fill="none" opacity="0.7" />
+          {/* f-hole */}
+          <path d="M-6,2 Q-6,6 -4,6" strokeWidth="1" fill="none" />
+          <path d="M6,2 Q6,6 4,6" strokeWidth="1" fill="none" />
+          {/* bow */}
+          <path d="M14,-10 L24,16" strokeWidth="1.2" fill="none" />
+        </g>
+      );
+    case "astroclock":
+      // Prague astronomical clock: circle with Roman numerals
+      return (
+        <g stroke="currentColor" strokeWidth="1.3" fill="none">
+          <circle cx="0" cy="0" r="18" />
+          <circle cx="0" cy="0" r="14" />
+          {/* tick marks at 12 positions */}
+          {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((a, i) => (
+            <line
+              key={i}
+              x1={14 * Math.cos(((a - 90) * Math.PI) / 180)}
+              y1={14 * Math.sin(((a - 90) * Math.PI) / 180)}
+              x2={17 * Math.cos(((a - 90) * Math.PI) / 180)}
+              y2={17 * Math.sin(((a - 90) * Math.PI) / 180)}
+              strokeWidth="1.3"
+            />
+          ))}
+          {/* hands */}
+          <line x1="0" y1="0" x2="0" y2="-11" strokeWidth="1.5" />
+          <line x1="0" y1="0" x2="8" y2="2" strokeWidth="1.5" />
+          <circle cx="0" cy="0" r="1.5" fill="currentColor" />
+        </g>
+      );
+    case "train":
+      return (
+        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
+          {/* locomotive body */}
+          <rect x="-20" y="-8" width="30" height="14" rx="1" />
+          {/* cabin */}
+          <rect x="-4" y="-14" width="14" height="6" />
+          {/* chimney */}
+          <rect x="-16" y="-12" width="3" height="4" />
+          {/* window */}
+          <rect x="-2" y="-12" width="4" height="3" fill="var(--night,black)" opacity="0.3" stroke="currentColor" strokeWidth="0.8" />
+          {/* wheels */}
+          <circle cx="-14" cy="8" r="3.5" fill="none" />
+          <circle cx="-4" cy="8" r="3.5" fill="none" />
+          <circle cx="6" cy="8" r="3.5" fill="none" />
+          {/* tracks */}
+          <path d="M-24,14 L16,14" strokeWidth="1" />
+        </g>
+      );
+    case "conductor":
+      // Music conductor baton + notes
+      return (
+        <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
+          {/* baton */}
+          <line x1="-14" y1="10" x2="10" y2="-12" strokeWidth="1.8" />
+          <circle cx="-14" cy="10" r="2.5" />
+          {/* music notes */}
+          <g>
+            <circle cx="-4" cy="6" r="2.5" />
+            <line x1="-1.5" y1="6" x2="-1.5" y2="-6" strokeWidth="1.3" />
+            <path d="M-1.5,-6 Q2,-8 3,-4" fill="none" strokeWidth="1.2" />
+          </g>
+          <g opacity="0.85">
+            <circle cx="12" cy="12" r="2" />
+            <line x1="14" y1="12" x2="14" y2="2" strokeWidth="1.2" />
+            <path d="M14,2 Q17,1 17,5" fill="none" strokeWidth="1" />
+          </g>
+        </g>
+      );
+    case "sachertorte":
+      return (
+        <g stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round">
+          <ellipse cx="0" cy="14" rx="22" ry="2.5" fill="currentColor" opacity="0.55" />
+          <rect x="-18" y="-4" width="36" height="16" rx="1" fill="currentColor" />
+          <path d="M-18,-4 Q-18,-12 0,-12 Q18,-12 18,-4 Z" fill="currentColor" />
+          <path d="M-18,-1 L-18,3 Q-16,5 -14,3 L-14,-1 Z" fill="currentColor" />
+          <path d="M18,-2 L18,4 Q16,6 14,4 L14,-2 Z" fill="currentColor" />
+          <ellipse cx="0" cy="-14" rx="5" ry="1.6" fill="currentColor" />
+          <circle cx="0" cy="-14" r="3" fill="none" stroke="currentColor" strokeWidth="0.9" />
+        </g>
+      );
+    case "mozart":
+      // Mozart profile silhouette (wig + face)
+      return (
+        <g stroke="currentColor" strokeWidth="1.2" fill="currentColor" strokeLinejoin="round">
+          {/* wig top */}
+          <path d="M-12,-18 Q-14,-10 -16,-4 Q-18,4 -14,8 Q-10,6 -6,4 L-6,-14 Q-6,-20 0,-20 Q10,-20 10,-10 Q10,0 8,8 L4,12 Q0,14 -4,14 Q-8,14 -10,12 Z" />
+          {/* wig side curls */}
+          <circle cx="-14" cy="0" r="3" />
+          <circle cx="-10" cy="8" r="2.5" />
+          <circle cx="8" cy="8" r="2.5" />
+          {/* face cutout */}
+          <path d="M-4,-8 Q-4,-12 0,-12 Q4,-12 4,-6 Q4,0 0,2 Q-4,0 -4,-8 Z" fill="var(--night,black)" opacity="0.15" stroke="none" />
+        </g>
+      );
+    case "fortress":
       return (
         <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
           <path d="M-20,13 Q-8,4 0,4 Q8,4 20,13 Z" />
           <rect x="-13" y="-6" width="26" height="11" />
           <rect x="-3" y="-16" width="7" height="10" />
-          {/* crenellations */}
           {[-12, -8, -4, 0, 4, 8, 12].map((x) => (
             <rect key={x} x={x - 1} y="-8" width="2" height="2.5" />
           ))}
         </g>
       );
-    case "JP":
-      // Mt Fuji
+    case "fuji":
       return (
         <g stroke="currentColor" strokeWidth="1.3" fill="currentColor" strokeLinejoin="round">
           <path d="M-20,10 L-6,-10 L-2,-6 L0,-14 L2,-6 L6,-10 L20,10 Z" />
           <path d="M-20,10 L20,10" />
-          {/* Rising sun */}
           <circle cx="0" cy="16" r="4" fill="currentColor" opacity="0.7" />
-        </g>
-      );
-    default:
-      return (
-        <g fill="currentColor">
-          <circle cx="0" cy="0" r="3" />
         </g>
       );
   }
@@ -141,14 +329,13 @@ function Landmark({ code }: { code: string }) {
 
 interface Props {
   city: string;
-  date: string; // "2026-04-26"
+  date: string;
 }
 
 export default function PassportStamp({ city, date }: Props) {
-  const info = stampForCity(city);
+  const info = stampForDate(date, city);
   const [y, m, d] = date.split("-");
-  const romanMonth = MONTH_ROMAN[Number(m)];
-  const dateLine = `${Number(d)} · ${romanMonth} · ${y}`;
+  const dateLine = `${Number(d)} · ${MONTH_ROMAN[Number(m)]} · ${y}`;
 
   return (
     <div
@@ -167,7 +354,6 @@ export default function PassportStamp({ city, date }: Props) {
           <path id="botArc" d="M 22,75 A 53,53 0 0 0 128,75" />
         </defs>
 
-        {/* outer double circle */}
         <circle
           cx="75"
           cy="75"
@@ -185,7 +371,6 @@ export default function PassportStamp({ city, date }: Props) {
           strokeWidth="1"
         />
 
-        {/* top arc: CITY · COUNTRY */}
         <text
           fontFamily="var(--font-cinzel), serif"
           fontSize="10"
@@ -199,7 +384,6 @@ export default function PassportStamp({ city, date }: Props) {
           </textPath>
         </text>
 
-        {/* bottom arc: date */}
         <text
           fontFamily="var(--font-cinzel), serif"
           fontSize="9.5"
@@ -212,15 +396,13 @@ export default function PassportStamp({ city, date }: Props) {
           </textPath>
         </text>
 
-        {/* decorative stars */}
         <g fill="currentColor">
           <text x="9" y="80" fontSize="11">★</text>
           <text x="131" y="80" fontSize="11">★</text>
         </g>
 
-        {/* center landmark */}
         <g transform="translate(75,75)">
-          <Landmark code={info.code} />
+          <Landmark kind={info.landmark} />
         </g>
       </svg>
     </div>
