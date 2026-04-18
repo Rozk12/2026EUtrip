@@ -207,41 +207,23 @@ main > div[style*="scrollbar-width"]::-webkit-scrollbar {
 }
 
 /* passport-style stamp, for days already passed */
-.passport-stamp {
-  --stamp-red: #c34646;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border: 4px double var(--stamp-red);
-  color: var(--stamp-red);
-  background: transparent;
-  font-family: var(--font-cinzel), serif;
-  letter-spacing: 0.2em;
-  font-weight: 700;
-  opacity: 0.75;
+.passport-stamp-svg {
+  opacity: 0.82;
   transform: rotate(-12deg);
-  animation: stamp-in 0.5s ease-out both;
-}
-.passport-stamp-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  font-size: 18px;
-  line-height: 1.15;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.15));
+  animation: stamp-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 @keyframes stamp-in {
   0% {
     opacity: 0;
-    transform: rotate(-12deg) scale(1.6);
+    transform: rotate(-12deg) scale(1.8);
   }
-  60% {
-    opacity: 0.9;
-    transform: rotate(-12deg) scale(0.95);
+  55% {
+    opacity: 0.95;
+    transform: rotate(-12deg) scale(0.92);
   }
   100% {
-    opacity: 0.78;
+    opacity: 0.82;
     transform: rotate(-12deg) scale(1);
   }
 }

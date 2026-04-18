@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
 import { useTrip } from "@/components/TripContext";
 import { toRoman } from "@/lib/roman";
+import PassportStamp from "@/components/PassportStamp";
 import {
   currentHHMM,
   dayRoute,
@@ -222,13 +223,7 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
         {/* passport stamp for past days */}
         {isPast && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="passport-stamp">
-              <div className="passport-stamp-inner">
-                <div>✈</div>
-                <div>PASSERET</div>
-                <div className="text-[10px] opacity-80">{month} {day}</div>
-              </div>
-            </div>
+            <PassportStamp city={route ? route.to : city} date={date} />
           </div>
         )}
       </div>

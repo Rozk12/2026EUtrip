@@ -48,6 +48,11 @@ export function shortDate(iso: string): { month: string; day: string } {
 }
 
 export function todayISO(): string {
+  // allow ?today=YYYY-MM-DD override for previewing past/future states
+  if (typeof window !== "undefined") {
+    const p = new URLSearchParams(window.location.search).get("today");
+    if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) return p;
+  }
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
