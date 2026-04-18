@@ -17,7 +17,7 @@
       "from": { "city": "東京", "airport": "HND", "lat": 35.5494, "lng": 139.7798 },
       "to": { "city": "Copenhagen", "airport": "CPH", "lat": 55.6121, "lng": 12.6477 },
       "departure": "2026-04-25T18:25:00+09:00",
-      "arrival": "2026-04-26T09:30:00+01:00",
+      "arrival": "2026-04-26T09:30:00+02:00",
       "bookingRef": "T8CGG4",
       "class": "Economy (W)",
       "stops": ["Istanbul (IST)"]
@@ -31,7 +31,7 @@
       "from": { "city": "大阪", "airport": "KIX", "lat": 34.4347, "lng": 135.2440 },
       "to": { "city": "Copenhagen", "airport": "CPH", "lat": 55.6121, "lng": 12.6477 },
       "departure": "2026-04-25T22:10:00+09:00",
-      "arrival": "2026-04-26T09:30:00+01:00",
+      "arrival": "2026-04-26T09:30:00+02:00",
       "bookingRef": "TCAAI3",
       "class": "Economy (E)",
       "stops": ["Istanbul (IST)"]
