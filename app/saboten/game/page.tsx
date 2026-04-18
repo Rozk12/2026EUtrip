@@ -348,7 +348,7 @@ export default function WhackPage() {
       {showNarration && (
         <div className="pointer-events-none fixed inset-0 z-30 flex items-center justify-center px-6">
           <div className="rounded-2xl bg-black/70 px-6 py-4 text-center text-lg font-bold text-white shadow-2xl backdrop-blur saboten-narration sm:text-2xl">
-            …こうして、サボテンたちは空へと帰っていった。
+            …逃してしまったサボテンは、空へと帰っていった。
           </div>
         </div>
       )}
