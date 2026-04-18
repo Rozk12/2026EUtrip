@@ -104,7 +104,10 @@ export default function DayTicket({
   }, [isCurrent, isPast, date]);
 
   return (
-    <article className="relative flex h-full w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto px-4 pb-24 pt-14">
+    <article
+      className="relative flex h-[100dvh] w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto overscroll-contain px-4 pb-24 pt-14"
+      style={{ WebkitOverflowScrolling: "touch" }}
+    >
       {/* ticket card */}
       <div className="ticket relative flex w-full max-w-md flex-col">
         {/* top band: route */}
