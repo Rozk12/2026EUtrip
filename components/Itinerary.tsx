@@ -112,6 +112,22 @@ export default function Itinerary({ selectedDate, onSelectDate, onFocus }: Props
                                 {m.sub}
                               </div>
                             )}
+                            {m.documents && m.documents.length > 0 && (
+                              <div className="mt-1 flex flex-wrap gap-2">
+                                {m.documents.map((d, di) => (
+                                  <a
+                                    key={di}
+                                    href={d.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                                  >
+                                    {d.label}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         </button>
                       </li>

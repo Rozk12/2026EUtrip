@@ -27,6 +27,7 @@ export interface Flight {
   checkedBag?: string;
   duration?: string;
   note?: string;
+  documents?: TripDoc[];
 }
 
 export interface Train {
@@ -45,6 +46,7 @@ export interface Train {
   cancellation?: string;
   ticketNumbers?: string[];
   ticketCodes?: string[];
+  documents?: TripDoc[];
 }
 
 export interface Hotel {
@@ -66,6 +68,12 @@ export interface Hotel {
   contact?: string;
   pin?: string;
   guestName?: string;
+  documents?: TripDoc[];
+}
+
+export interface TripDoc {
+  label: string;
+  url: string;
 }
 
 export interface TripEvent {
@@ -81,6 +89,7 @@ export interface TripEvent {
   time: string;
   duration?: string;
   note?: string;
+  documents?: TripDoc[];
 }
 
 export interface TripData {
@@ -128,6 +137,7 @@ export interface Marker {
   lat: number;
   lng: number;
   date: string;
+  documents?: TripDoc[];
 }
 
 const time = (iso: string): string => iso.slice(11, 16);
@@ -148,6 +158,7 @@ export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
         lat: f.from.lat,
         lng: f.from.lng,
         date,
+        documents: f.documents,
       });
     }
     if (f.arrival.slice(0, 10) === date) {
@@ -162,6 +173,7 @@ export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
         lat: f.to.lat,
         lng: f.to.lng,
         date,
+        documents: f.documents,
       });
     }
   }
@@ -179,6 +191,7 @@ export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
         lat: t.from.lat,
         lng: t.from.lng,
         date,
+        documents: t.documents,
       });
     }
     if (t.arrival.slice(0, 10) === date) {
@@ -193,6 +206,7 @@ export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
         lat: t.to.lat,
         lng: t.to.lng,
         date,
+        documents: t.documents,
       });
     }
   }
@@ -211,6 +225,7 @@ export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
         lat: h.lat,
         lng: h.lng,
         date,
+        documents: h.documents,
       });
     }
   }
@@ -228,6 +243,7 @@ export function buildMarkersForDate(trip: TripData, date: string): Marker[] {
         lat: e.lat,
         lng: e.lng,
         date,
+        documents: e.documents,
       });
     }
   }

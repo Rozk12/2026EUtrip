@@ -177,7 +177,27 @@
       "date": "2026-04-28",
       "time": "19:00",
       "duration": "約1時間",
-      "note": "開演15分前から入場可"
+      "note": "開演15分前から入場可",
+      "documents": [
+        { "label": "🎫 チケット (PDF)", "url": "/tickets/Ticket_bohemian_concert.pdf" }
+      ]
+    },
+    {
+      "id": "event_2",
+      "type": "event",
+      "name": "Frühlingskonzert (Wiener Johann Strauss Orchester)",
+      "city": "Vienna",
+      "venue": "Wiener Musikverein - Großer Musikvereinssaal",
+      "address": "Musikvereinsplatz 1, 1010 Wien",
+      "lat": 48.2006,
+      "lng": 16.3725,
+      "date": "2026-05-01",
+      "time": "11:00",
+      "duration": "約2時間",
+      "note": "指揮: Alfred Eschwé / 座席: Cercle rechts Reihe II Platz 10・11 / 開場30分前",
+      "documents": [
+        { "label": "🎫 チケット (PDF)", "url": "/tickets/ticket_musikverein.pdf" }
+      ]
     }
   ],
   "itinerary": [
@@ -187,7 +207,7 @@
     { "date": "2026-04-28", "city": "Prague", "events": ["flight_2", "event_1"] },
     { "date": "2026-04-29", "city": "Prague", "events": [] },
     { "date": "2026-04-30", "city": "Prague → Vienna", "events": ["train_1"] },
-    { "date": "2026-05-01", "city": "Vienna", "events": [] },
+    { "date": "2026-05-01", "city": "Vienna", "events": ["event_2"] },
     { "date": "2026-05-02", "city": "Vienna → Salzburg", "events": ["train_2"] },
     { "date": "2026-05-03", "city": "Salzburg", "events": [] },
     { "date": "2026-05-04", "city": "Salzburg → Tokyo", "events": ["flight_3"] },

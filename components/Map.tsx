@@ -130,6 +130,21 @@ export default function MapView({ selectedDate, focusedKey }: Props) {
                 </div>
                 <div className="font-semibold">{m.label}</div>
                 {m.sub && <div className="text-xs text-slate-600">{m.sub}</div>}
+                {m.documents && m.documents.length > 0 && (
+                  <div className="flex flex-col gap-1 pt-1">
+                    {m.documents.map((d, di) => (
+                      <a
+                        key={di}
+                        href={d.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-blue-600 underline"
+                      >
+                        {d.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </Popup>
           </Marker>
