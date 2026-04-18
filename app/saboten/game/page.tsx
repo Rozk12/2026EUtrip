@@ -326,14 +326,24 @@ export default function WhackPage() {
               animationDuration: `${c.duration}s`,
             }}
           >
-            <div
-              className="saboten-spin"
-              style={{
-                animationDuration: `${2 + Math.random() * 2}s`,
-                animationDirection: c.spinDir > 0 ? "normal" : "reverse",
-              }}
-            >
-              <CactusFace face={c.face} size={c.size} />
+            <div className="relative">
+              <div
+                className="saboten-bubble"
+                style={{
+                  animationDelay: `${c.delay + 0.3}s`,
+                }}
+              >
+                Arrivederci!
+              </div>
+              <div
+                className="saboten-spin"
+                style={{
+                  animationDuration: `${2 + Math.random() * 2}s`,
+                  animationDirection: c.spinDir > 0 ? "normal" : "reverse",
+                }}
+              >
+                <CactusFace face={c.face} size={c.size} />
+              </div>
             </div>
           </div>
         ))}
@@ -442,6 +452,44 @@ export default function WhackPage() {
           animation-name: saboten-drift;
           animation-timing-function: ease-in-out;
           animation-fill-mode: forwards;
+        }
+
+        /* speech bubble for sky-bound cacti */
+        .saboten-bubble {
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          transform: translate(-30%, -8px);
+          background: white;
+          color: #1b5e20;
+          font-weight: 700;
+          font-size: 13px;
+          font-style: italic;
+          padding: 4px 10px;
+          border-radius: 14px;
+          white-space: nowrap;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+          opacity: 0;
+          animation: bubble-pop 2.4s ease-out forwards;
+          pointer-events: none;
+        }
+        .saboten-bubble::after {
+          content: "";
+          position: absolute;
+          left: 28%;
+          top: 100%;
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 8px solid white;
+        }
+        @keyframes bubble-pop {
+          0% { opacity: 0; transform: translate(-30%, 0) scale(0.6); }
+          15% { opacity: 1; transform: translate(-30%, -8px) scale(1.1); }
+          25% { opacity: 1; transform: translate(-30%, -8px) scale(1); }
+          80% { opacity: 1; transform: translate(-30%, -8px) scale(1); }
+          100% { opacity: 0; transform: translate(-30%, -14px) scale(0.9); }
         }
 
         /* narration fade */
