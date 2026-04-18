@@ -205,17 +205,6 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
           )}
         </div>
 
-        {/* country map */}
-        <div className="border-t border-dashed border-[rgba(212,168,75,0.35)] px-2 py-2">
-          <div className="mb-1 flex items-center justify-between px-3">
-            <span className="chevron-label">LAND</span>
-            <span className="font-title text-[8px] tracking-[0.3em] text-[var(--cream-soft)]">
-              {route ? `${route.from.toUpperCase()} → ${route.to.toUpperCase()}` : city.toUpperCase()}
-            </span>
-          </div>
-          <CountryMap cityString={city} />
-        </div>
-
         {/* bottom band */}
         <div className="flex items-center justify-between border-t border-dashed border-[rgba(212,168,75,0.35)] px-5 py-3">
           <div className="font-title text-[9px] tracking-[0.35em] text-[var(--cream-soft)]">
@@ -238,6 +227,19 @@ export default function DayTicket({ date, city, idx, total, onFocus }: Props) {
             <PassportStamp city={route ? route.to : city} date={date} />
           </div>
         )}
+      </div>
+
+      {/* country silhouette in the empty space below the ticket */}
+      <div className="mt-4 w-full max-w-md opacity-85">
+        <div className="mb-1 flex items-center justify-between px-1">
+          <span className="chevron-label">LAND</span>
+          <span className="font-title text-[8px] tracking-[0.3em] text-[var(--cream-soft)]">
+            {route
+              ? `${route.from.toUpperCase()} → ${route.to.toUpperCase()}`
+              : city.toUpperCase()}
+          </span>
+        </div>
+        <CountryMap cityString={city} />
       </div>
     </article>
   );
