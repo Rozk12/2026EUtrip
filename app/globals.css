@@ -213,6 +213,11 @@ main > div[style*="scrollbar-width"]::-webkit-scrollbar {
   animation: stamp-press 0.9s cubic-bezier(0.17, 0.67, 0.32, 1.25) both;
   animation-delay: 0.35s;
 }
+.passport-stamp-static {
+  animation: none !important;
+  opacity: 0.82;
+  transform: rotate(-12deg);
+}
 @keyframes stamp-press {
   0% {
     opacity: 0;

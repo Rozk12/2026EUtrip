@@ -677,16 +677,17 @@ function Landmark({ kind }: { kind: LandmarkKey }) {
 interface Props {
   city: string;
   date: string;
+  animate?: boolean;
 }
 
-export default function PassportStamp({ city, date }: Props) {
+export default function PassportStamp({ city, date, animate = true }: Props) {
   const info = stampForDate(date, city);
   const [y, m, d] = date.split("-");
   const dateLine = `${Number(d)} · ${MONTH_ROMAN[Number(m)]} · ${y}`;
 
   return (
     <div
-      className="passport-stamp-svg"
+      className={`passport-stamp-svg ${animate ? "" : "passport-stamp-static"}`}
       style={{ color: info.color }}
       aria-hidden
     >

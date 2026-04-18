@@ -64,18 +64,44 @@ export default function DayTicket({
   const upcoming = isToday ? nextUpcoming(markers, now) : null;
   const untilMin = upcoming ? minutesUntil(upcoming.time, now) : null;
 
-  // Re-trigger the stamp animation each time this card becomes the
-  // currently-visible one (fresh mount via bumped key).
+  // Stamp press: play once per date in normal mode, every swipe in debug mode.
   const [stampTick, setStampTick] = useState(0);
+  const [stampAnimate, setStampAnimate] = useState(false);
   const wasCurrentRef = useRef(false);
+  const STAMP_KEY = "stampedDates";
   useEffect(() => {
+    if (!isPast) return;
     if (isCurrent && !wasCurrentRef.current) {
-      setStampTick((t) => t + 1);
       wasCurrentRef.current = true;
+      if (typeof window === "undefined") return;
+      const debug = new URLSearchParams(window.location.search).has("today");
+      if (debug) {
+        setStampAnimate(true);
+        setStampTick((t) => t + 1);
+        return;
+      }
+      try {
+        const seen: string[] = JSON.parse(
+          localStorage.getItem(STAMP_KEY) ?? "[]",
+        );
+        if (!seen.includes(date)) {
+          setStampAnimate(true);
+          setStampTick((t) => t + 1);
+          localStorage.setItem(
+            STAMP_KEY,
+            JSON.stringify([...seen, date]),
+          );
+        } else {
+          setStampAnimate(false);
+        }
+      } catch {
+        setStampAnimate(true);
+        setStampTick((t) => t + 1);
+      }
     } else if (!isCurrent) {
       wasCurrentRef.current = false;
     }
-  }, [isCurrent]);
+  }, [isCurrent, isPast, date]);
 
   return (
     <article className="relative flex h-full w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto px-4 pb-24 pt-14">
@@ -161,7 +187,7 @@ export default function DayTicket({
         )}
 
         {/* events */}
-        <div className="flex-1 px-2 py-2">
+        <div className="px-2 py-2">
           {markers.length === 0 ? (
             <div className="px-4 py-6 text-center text-[12px] italic text-[var(--cream-soft)]">
               — hvile —
@@ -242,37 +268,47 @@ export default function DayTicket({
           style={{ background: color }}
         />
 
-        {/* passport stamp for past days — re-animates each time this card becomes current */}
+        {/* passport stamp — animates once per date (or every swipe in debug mode) */}
         {isPast && (
           <div
             key={stampTick}
             className="pointer-events-none absolute inset-0 flex items-center justify-center"
           >
             <div className="relative">
-              <PassportStamp city={route ? route.to : city} date={date} />
-              <span className="stamp-shockwave" style={{ color: "var(--burgundy)" }} />
-              {/* ink specks */}
-              {[
-                { tx: "-60px", ty: "-34px" },
-                { tx: "58px", ty: "-40px" },
-                { tx: "-72px", ty: "22px" },
-                { tx: "70px", ty: "28px" },
-                { tx: "-12px", ty: "-72px" },
-                { tx: "18px", ty: "70px" },
-              ].map((s, i) => (
-                <span
-                  key={i}
-                  className="ink-speck"
-                  style={
-                    {
-                      color: "var(--burgundy)",
-                      ["--tx" as any]: s.tx,
-                      ["--ty" as any]: s.ty,
-                      animationDelay: `${0.7 + i * 0.02}s`,
-                    } as React.CSSProperties
-                  }
-                />
-              ))}
+              <PassportStamp
+                city={route ? route.to : city}
+                date={date}
+                animate={stampAnimate}
+              />
+              {stampAnimate && (
+                <>
+                  <span
+                    className="stamp-shockwave"
+                    style={{ color: "var(--burgundy)" }}
+                  />
+                  {[
+                    { tx: "-60px", ty: "-34px" },
+                    { tx: "58px", ty: "-40px" },
+                    { tx: "-72px", ty: "22px" },
+                    { tx: "70px", ty: "28px" },
+                    { tx: "-12px", ty: "-72px" },
+                    { tx: "18px", ty: "70px" },
+                  ].map((s, i) => (
+                    <span
+                      key={i}
+                      className="ink-speck"
+                      style={
+                        {
+                          color: "var(--burgundy)",
+                          ["--tx" as any]: s.tx,
+                          ["--ty" as any]: s.ty,
+                          animationDelay: `${0.7 + i * 0.02}s`,
+                        } as React.CSSProperties
+                      }
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         )}
