@@ -19,9 +19,10 @@ const CURRENCIES: CurrencyDef[] = [
 ];
 
 // Fallback rates (1 EUR = N) when the live fetch fails / offline.
+// Bumped to 2026 realistic values — the live ECB fetch overrides these.
 const FALLBACK_RATES: Record<Code, number> = {
   EUR: 1,
-  JPY: 164,
+  JPY: 180,
   DKK: 7.46,
   CZK: 25.1,
 };
@@ -49,7 +50,10 @@ export default function ValutaPage() {
     fetch("https://api.frankfurter.app/latest?from=EUR&to=JPY,DKK,CZK", {
       signal: ac.signal,
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: { date: string; rates: Record<string, number> }) => {
         setRates({
           EUR: 1,
@@ -60,8 +64,10 @@ export default function ValutaPage() {
         setRateDate(data.date);
         setSource("live");
       })
-      .catch(() => {
-        // silently use fallback
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          console.warn("ECB rate fetch failed, using fallback", err);
+        }
       });
     return () => ac.abort();
   }, []);
