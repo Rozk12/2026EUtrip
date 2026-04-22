@@ -221,6 +221,17 @@ export default function TripApp({ initialTrip }: Props) {
         </div>
 
         <a
+          href="/pakliste"
+          aria-label="持ち物リスト"
+          className="absolute right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
+          style={{
+            bottom: "calc(12.5rem + env(safe-area-inset-bottom, 0px))",
+          }}
+        >
+          🧳
+        </a>
+
+        <a
           href="/valuta"
           aria-label="通貨換算"
           className="absolute right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
