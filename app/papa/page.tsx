@@ -39,7 +39,13 @@ export default function PapaPage() {
   };
 
   return (
-    <main className="flex h-[100dvh] flex-col bg-black text-white">
+    <main
+      className="flex h-[100dvh] flex-col bg-black text-white"
+      style={{
+        paddingTop: "env(safe-area-inset-top, 0px)",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+      }}
+    >
       {/* top header */}
       <div className="flex items-center justify-between px-4 py-3 text-xs text-slate-400">
         <span className="rounded bg-slate-800 px-2 py-0.5 font-medium">

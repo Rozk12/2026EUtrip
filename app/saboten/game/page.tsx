@@ -215,7 +215,13 @@ export default function WhackPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-start gap-4 overflow-hidden bg-gradient-to-b from-sky-300 via-amber-50 to-amber-200 px-4 pb-8 pt-6">
+    <main
+      className="relative flex min-h-[100dvh] flex-col items-center justify-start gap-4 overflow-hidden bg-gradient-to-b from-sky-300 via-amber-50 to-amber-200 px-4"
+      style={{
+        paddingTop: "calc(1.5rem + env(safe-area-inset-top, 0px))",
+        paddingBottom: "calc(2rem + env(safe-area-inset-bottom, 0px))",
+      }}
+    >
       <h1 className="z-10 text-2xl font-black tracking-tight text-emerald-900 sm:text-4xl">
         🌵 サボテン叩き 🌵
       </h1>

@@ -196,7 +196,10 @@ export default function TripApp({ initialTrip }: Props) {
           <div className="relative h-full w-full bg-[var(--midnight)]">
             <MapView selectedDate={currentDate ?? "all"} focusedKey={focusedKey} />
 
-            <div className="pointer-events-none absolute left-3 top-3 z-[2000] border border-[rgba(212,168,75,0.5)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 font-title text-[10px] tracking-[0.4em] text-[var(--gold)] shadow backdrop-blur">
+            <div
+              className="pointer-events-none absolute left-3 z-[2000] border border-[rgba(212,168,75,0.5)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 font-title text-[10px] tracking-[0.4em] text-[var(--gold)] shadow backdrop-blur"
+              style={{ top: "calc(0.75rem + env(safe-area-inset-top, 0px))" }}
+            >
               EUROPAKORT
             </div>
 
@@ -206,7 +209,10 @@ export default function TripApp({ initialTrip }: Props) {
                 setMapOpen(false);
                 setFocusedKey(null);
               }}
-              className="absolute bottom-6 left-1/2 z-[2000] flex h-12 -translate-x-1/2 items-center gap-3 rounded-full border-2 border-[var(--gold)] bg-[rgba(11,24,40,0.95)] px-6 font-title text-[12px] tracking-[0.4em] text-[var(--gold)] shadow-2xl backdrop-blur hover:bg-[rgba(212,168,75,0.15)] active:scale-95"
+              className="absolute left-1/2 z-[2000] flex h-12 -translate-x-1/2 items-center gap-3 rounded-full border-2 border-[var(--gold)] bg-[rgba(11,24,40,0.95)] px-6 font-title text-[12px] tracking-[0.4em] text-[var(--gold)] shadow-2xl backdrop-blur hover:bg-[rgba(212,168,75,0.15)] active:scale-95"
+              style={{
+                bottom: "calc(1.5rem + env(safe-area-inset-bottom, 0px))",
+              }}
             >
               <span className="text-lg leading-none">←</span>
               REJSEN
