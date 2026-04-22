@@ -44,13 +44,15 @@ export default function ValutaPage() {
   const [base, setBase] = useState<Code>("JPY");
   const [amount, setAmount] = useState<string>("1000");
 
-  // Try multiple free rate APIs. First one that succeeds wins.
+  const [refreshTick, setRefreshTick] = useState(0);
+
   useEffect(() => {
     const ac = new AbortController();
 
     async function tryOpenErApi(): Promise<{ date: string; rates: Record<string, number> }> {
       const res = await fetch("https://open.er-api.com/v6/latest/EUR", {
         signal: ac.signal,
+        cache: "no-store",
       });
       if (!res.ok) throw new Error(`open.er-api ${res.status}`);
       const data = await res.json();
@@ -63,10 +65,21 @@ export default function ValutaPage() {
       };
     }
 
+    async function tryExchangerateHost(): Promise<{ date: string; rates: Record<string, number> }> {
+      const res = await fetch(
+        "https://api.exchangerate.host/latest?base=EUR&symbols=JPY,DKK,CZK",
+        { signal: ac.signal, cache: "no-store" },
+      );
+      if (!res.ok) throw new Error(`exchangerate.host ${res.status}`);
+      const data = await res.json();
+      if (!data.rates) throw new Error("exchangerate.host no rates");
+      return { date: data.date ?? new Date().toISOString().slice(0, 10), rates: data.rates };
+    }
+
     async function tryFrankfurter(): Promise<{ date: string; rates: Record<string, number> }> {
       const res = await fetch(
         "https://api.frankfurter.app/latest?from=EUR&to=JPY,DKK,CZK",
-        { signal: ac.signal },
+        { signal: ac.signal, cache: "no-store" },
       );
       if (!res.ok) throw new Error(`frankfurter ${res.status}`);
       const data = await res.json();
@@ -76,6 +89,7 @@ export default function ValutaPage() {
     (async () => {
       for (const [name, fetcher] of [
         ["open.er-api", tryOpenErApi],
+        ["exchangerate.host", tryExchangerateHost],
         ["frankfurter", tryFrankfurter],
       ] as const) {
         try {
@@ -95,10 +109,11 @@ export default function ValutaPage() {
         }
       }
       console.warn("All rate APIs failed — using fallback rates.");
+      setSource("fallback");
     })();
 
     return () => ac.abort();
-  }, []);
+  }, [refreshTick]);
 
   const parsedAmount = Number(amount.replace(/,/g, "")) || 0;
 
@@ -121,11 +136,18 @@ export default function ValutaPage() {
           <h1 className="mt-1 font-deco text-3xl text-[var(--gold)]">
             通貨換算
           </h1>
-          <p className="mt-1 text-[11px] italic text-[var(--cream-soft)]">
+          <button
+            onClick={() => {
+              setSource("fallback");
+              setRefreshTick((t) => t + 1);
+            }}
+            className="mt-1 inline-flex items-center gap-1 text-[11px] italic text-[var(--cream-soft)] underline-offset-2 hover:underline"
+          >
             {source === "live" && rateDate
-              ? `ECB 公式レート · ${rateDate}`
+              ? `公式レート · ${rateDate}`
               : "オフライン・参考レート"}
-          </p>
+            <span className="text-[9px] opacity-70">↻</span>
+          </button>
         </header>
 
         {/* Active base + amount */}
