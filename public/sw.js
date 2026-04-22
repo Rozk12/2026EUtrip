@@ -1,6 +1,6 @@
 // Rejse 2026 offline service worker
 // Bump the version string to force a refresh on all clients.
-const VERSION = "rejse-2026-v1";
+const VERSION = "rejse-2026-v2";
 const STATIC = `${VERSION}-static`;
 const DATA = `${VERSION}-data`;
 const PDF = `${VERSION}-pdf`;

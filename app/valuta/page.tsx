@@ -44,31 +44,59 @@ export default function ValutaPage() {
   const [base, setBase] = useState<Code>("JPY");
   const [amount, setAmount] = useState<string>("1000");
 
-  // Fetch current ECB rates via Frankfurter (no API key, free, CORS-friendly).
+  // Try multiple free rate APIs. First one that succeeds wins.
   useEffect(() => {
     const ac = new AbortController();
-    fetch("https://api.frankfurter.app/latest?from=EUR&to=JPY,DKK,CZK", {
-      signal: ac.signal,
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: { date: string; rates: Record<string, number> }) => {
-        setRates({
-          EUR: 1,
-          JPY: data.rates.JPY ?? FALLBACK_RATES.JPY,
-          DKK: data.rates.DKK ?? FALLBACK_RATES.DKK,
-          CZK: data.rates.CZK ?? FALLBACK_RATES.CZK,
-        });
-        setRateDate(data.date);
-        setSource("live");
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") {
-          console.warn("ECB rate fetch failed, using fallback", err);
-        }
+
+    async function tryOpenErApi(): Promise<{ date: string; rates: Record<string, number> }> {
+      const res = await fetch("https://open.er-api.com/v6/latest/EUR", {
+        signal: ac.signal,
       });
+      if (!res.ok) throw new Error(`open.er-api ${res.status}`);
+      const data = await res.json();
+      if (data.result !== "success") throw new Error("open.er-api not success");
+      return {
+        date:
+          (data.time_last_update_utc as string | undefined)?.slice(5, 16) ??
+          new Date().toISOString().slice(0, 10),
+        rates: data.rates,
+      };
+    }
+
+    async function tryFrankfurter(): Promise<{ date: string; rates: Record<string, number> }> {
+      const res = await fetch(
+        "https://api.frankfurter.app/latest?from=EUR&to=JPY,DKK,CZK",
+        { signal: ac.signal },
+      );
+      if (!res.ok) throw new Error(`frankfurter ${res.status}`);
+      const data = await res.json();
+      return { date: data.date, rates: data.rates };
+    }
+
+    (async () => {
+      for (const [name, fetcher] of [
+        ["open.er-api", tryOpenErApi],
+        ["frankfurter", tryFrankfurter],
+      ] as const) {
+        try {
+          const { date, rates: r } = await fetcher();
+          setRates({
+            EUR: 1,
+            JPY: r.JPY ?? FALLBACK_RATES.JPY,
+            DKK: r.DKK ?? FALLBACK_RATES.DKK,
+            CZK: r.CZK ?? FALLBACK_RATES.CZK,
+          });
+          setRateDate(date);
+          setSource("live");
+          return;
+        } catch (err) {
+          if ((err as Error).name === "AbortError") return;
+          console.warn(`${name} rate fetch failed`, err);
+        }
+      }
+      console.warn("All rate APIs failed — using fallback rates.");
+    })();
+
     return () => ac.abort();
   }, []);
 
