@@ -8,7 +8,7 @@ interface Preset {
   question: string;
 }
 
-const PRESETS: Preset[] = [
+const PHOTO_PRESETS: Preset[] = [
   {
     label: "建築様式",
     emoji: "🏛️",
@@ -41,11 +41,47 @@ const PRESETS: Preset[] = [
   },
 ];
 
+const TEXT_PRESETS: Preset[] = [
+  {
+    label: "デンマーク語で",
+    emoji: "🇩🇰",
+    question:
+      "旅行中にデンマーク（コペンハーゲン）で使える便利なフレーズを日本語→デンマーク語の対訳でいくつか教えてください（発音のカタカナも）。",
+  },
+  {
+    label: "チェコ語で",
+    emoji: "🇨🇿",
+    question:
+      "旅行中にチェコ（プラハ）で使える便利なフレーズを日本語→チェコ語の対訳でいくつか教えてください（発音のカタカナも）。",
+  },
+  {
+    label: "ドイツ語で",
+    emoji: "🇦🇹",
+    question:
+      "旅行中にオーストリア（ウィーン/ザルツブルグ）で使える便利なフレーズを日本語→ドイツ語の対訳でいくつか教えてください（発音のカタカナも）。",
+  },
+  {
+    label: "メニュー定番",
+    emoji: "🍴",
+    question:
+      "デンマーク・チェコ・オーストリアでよく出る料理名とその意味を、日本語で一覧にしてください。",
+  },
+  {
+    label: "チップ・マナー",
+    emoji: "💶",
+    question:
+      "デンマーク・チェコ・オーストリアでのチップ習慣、レストラン・カフェ・タクシーでの相場と渡し方を日本語で簡潔に教えてください。",
+  },
+];
+
+type Mode = "camera" | "text";
+
 export default function KameraPage() {
+  const [mode, setMode] = useState<Mode>("camera");
   const [preview, setPreview] = useState<string | null>(null);
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState("image/jpeg");
-  const [question, setQuestion] = useState<string>(PRESETS[0].question);
+  const [question, setQuestion] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +95,6 @@ export default function KameraPage() {
       const dataUrl = ev.target?.result as string;
       const img = new Image();
       img.onload = () => {
-        // Resize the longest edge to 1280 to keep payload small
         const MAX = 1280;
         let { width, height } = img;
         if (width > MAX || height > MAX) {
@@ -90,8 +125,8 @@ export default function KameraPage() {
     if (file) handleFile(file);
   };
 
-  const ask = async (q: string) => {
-    if (!imageBase64) return;
+  const ask = async (q: string, opts?: { includeImage?: boolean }) => {
+    const includeImage = opts?.includeImage ?? mode === "camera";
     setQuestion(q);
     setLoading(true);
     setAnswer(null);
@@ -101,7 +136,7 @@ export default function KameraPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          image: imageBase64,
+          image: includeImage ? imageBase64 : null,
           mediaType,
           question: q,
         }),
@@ -121,6 +156,7 @@ export default function KameraPage() {
     setImageBase64(null);
     setAnswer(null);
     setError(null);
+    setQuestion("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -134,16 +170,46 @@ export default function KameraPage() {
     >
       <div className="mx-auto max-w-md">
         <header className="mb-5 text-center">
-          <div className="chevron-label">KAMERA · SPØRG</div>
+          <div className="chevron-label">SPØRG GEMINI</div>
           <h1 className="mt-1 font-deco text-3xl text-[var(--gold)]">
-            写真で聞く
+            AI に聞く
           </h1>
-          <p className="mt-1 text-[11px] italic text-[var(--cream-soft)]">
-            建物・看板・メニュー・なんでも Gemini が答えます
-          </p>
         </header>
 
-        {!preview && (
+        {/* Tabs */}
+        <div className="mb-5 flex gap-2 rounded-full border border-[rgba(212,168,75,0.35)] bg-[var(--night)] p-1">
+          <button
+            onClick={() => {
+              setMode("camera");
+              setAnswer(null);
+              setError(null);
+            }}
+            className={`flex-1 rounded-full px-3 py-2 text-center font-title text-[11px] tracking-[0.3em] transition ${
+              mode === "camera"
+                ? "bg-[var(--gold)] text-[var(--midnight)]"
+                : "text-[var(--cream-soft)] hover:bg-[rgba(212,168,75,0.08)]"
+            }`}
+          >
+            📷 カメラ
+          </button>
+          <button
+            onClick={() => {
+              setMode("text");
+              setAnswer(null);
+              setError(null);
+            }}
+            className={`flex-1 rounded-full px-3 py-2 text-center font-title text-[11px] tracking-[0.3em] transition ${
+              mode === "text"
+                ? "bg-[var(--gold)] text-[var(--midnight)]"
+                : "text-[var(--cream-soft)] hover:bg-[rgba(212,168,75,0.08)]"
+            }`}
+          >
+            💬 テキスト
+          </button>
+        </div>
+
+        {/* Camera mode */}
+        {mode === "camera" && !preview && (
           <label className="block cursor-pointer">
             <input
               ref={fileInputRef}
@@ -165,7 +231,7 @@ export default function KameraPage() {
           </label>
         )}
 
-        {preview && (
+        {mode === "camera" && preview && (
           <div className="space-y-4">
             <div className="relative overflow-hidden rounded-2xl border border-[var(--gold)]">
               <img src={preview} alt="preview" className="w-full" />
@@ -178,10 +244,10 @@ export default function KameraPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {PRESETS.map((p) => (
+              {PHOTO_PRESETS.map((p) => (
                 <button
                   key={p.label}
-                  onClick={() => ask(p.question)}
+                  onClick={() => ask(p.question, { includeImage: true })}
                   disabled={loading}
                   className="flex flex-col items-center gap-1 rounded-xl border border-[rgba(212,168,75,0.35)] bg-[var(--night)] px-2 py-3 text-[11px] text-[var(--cream)] transition hover:bg-[rgba(212,168,75,0.08)] disabled:opacity-50"
                 >
@@ -201,7 +267,7 @@ export default function KameraPage() {
                 const q = (
                   e.currentTarget.elements.namedItem("q") as HTMLInputElement
                 ).value.trim();
-                if (q) ask(q);
+                if (q) ask(q, { includeImage: true });
               }}
               className="flex gap-2"
             >
@@ -219,35 +285,85 @@ export default function KameraPage() {
                 聞く
               </button>
             </form>
-
-            {loading && (
-              <div className="flex items-center justify-center gap-3 rounded-2xl bg-[var(--night)] p-6">
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--gold)] border-t-transparent" />
-                <span className="font-title text-[11px] tracking-[0.3em] text-[var(--gold)]">
-                  ANALYZING…
-                </span>
-              </div>
-            )}
-
-            {error && (
-              <div className="rounded-2xl border border-[var(--burgundy)] bg-[rgba(140,36,48,0.18)] p-4 text-sm">
-                <div className="chevron-label mb-1">ERROR</div>
-                {error}
-              </div>
-            )}
-
-            {answer && (
-              <article className="rounded-2xl bg-[var(--night)] p-5 shadow-lg ring-1 ring-[rgba(212,168,75,0.35)]">
-                <div className="chevron-label mb-2">SVAR</div>
-                <div className="mb-3 text-[11px] italic text-[var(--cream-soft)]">
-                  Q: {question}
-                </div>
-                <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--cream)]">
-                  {answer}
-                </div>
-              </article>
-            )}
           </div>
+        )}
+
+        {/* Text-only mode */}
+        {mode === "text" && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {TEXT_PRESETS.map((p) => (
+                <button
+                  key={p.label}
+                  onClick={() => ask(p.question, { includeImage: false })}
+                  disabled={loading}
+                  className="flex flex-col items-center gap-1 rounded-xl border border-[rgba(212,168,75,0.35)] bg-[var(--night)] px-2 py-3 text-[11px] text-[var(--cream)] transition hover:bg-[rgba(212,168,75,0.08)] disabled:opacity-50"
+                >
+                  <span className="text-lg">{p.emoji}</span>
+                  <span className="font-title tracking-wider">{p.label}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="deco-ornament">
+              <span className="chevron-label">ASK ANYTHING</span>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const q = (
+                  e.currentTarget.elements.namedItem("q") as HTMLInputElement
+                ).value.trim();
+                if (q) ask(q, { includeImage: false });
+              }}
+              className="flex flex-col gap-2"
+            >
+              <textarea
+                name="q"
+                rows={3}
+                placeholder="例: 『ありがとう』をデンマーク語で教えて / プラハのお勧め夕食スポットは？"
+                className="w-full rounded-2xl border border-[rgba(212,168,75,0.4)] bg-[var(--night)] px-4 py-3 text-sm text-[var(--cream)] placeholder:text-[var(--cream-soft)] focus:border-[var(--gold)] focus:outline-none"
+                disabled={loading}
+              />
+              <button
+                type="submit"
+                disabled={loading}
+                className="self-end rounded-full bg-[var(--gold)] px-6 py-2 font-title text-[11px] tracking-[0.3em] text-[var(--midnight)] disabled:opacity-50"
+              >
+                聞く
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Shared result area */}
+        {loading && (
+          <div className="mt-4 flex items-center justify-center gap-3 rounded-2xl bg-[var(--night)] p-6">
+            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--gold)] border-t-transparent" />
+            <span className="font-title text-[11px] tracking-[0.3em] text-[var(--gold)]">
+              ANALYZING…
+            </span>
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-4 rounded-2xl border border-[var(--burgundy)] bg-[rgba(140,36,48,0.18)] p-4 text-sm">
+            <div className="chevron-label mb-1">ERROR</div>
+            {error}
+          </div>
+        )}
+
+        {answer && (
+          <article className="mt-4 rounded-2xl bg-[var(--night)] p-5 shadow-lg ring-1 ring-[rgba(212,168,75,0.35)]">
+            <div className="chevron-label mb-2">SVAR</div>
+            <div className="mb-3 text-[11px] italic text-[var(--cream-soft)]">
+              Q: {question}
+            </div>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--cream)]">
+              {answer}
+            </div>
+          </article>
         )}
 
         <div className="mt-8 text-center">

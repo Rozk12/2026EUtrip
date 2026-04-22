@@ -13,7 +13,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 async function callGemini(
   apiKey: string,
   modelName: string,
-  image: string,
+  image: string | null,
   mediaType: string,
   question: string,
 ): Promise<string> {
@@ -22,10 +22,13 @@ async function callGemini(
     model: modelName,
     systemInstruction: SYSTEM_PROMPT,
   });
-  const result = await model.generateContent([
-    { inlineData: { data: image, mimeType: mediaType } },
-    { text: question },
-  ]);
+  const parts: Array<{ text?: string; inlineData?: { data: string; mimeType: string } }> =
+    [];
+  if (image) {
+    parts.push({ inlineData: { data: image, mimeType: mediaType } });
+  }
+  parts.push({ text: question });
+  const result = await model.generateContent(parts);
   return result.response.text();
 }
 
@@ -46,9 +49,6 @@ export async function POST(req: NextRequest) {
   }
 
   const { image, mediaType = "image/jpeg", question } = body;
-  if (!image) {
-    return NextResponse.json({ error: "Missing image" }, { status: 400 });
-  }
   if (!question || typeof question !== "string") {
     return NextResponse.json({ error: "Missing question" }, { status: 400 });
   }
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         const answer = await callGemini(
           apiKey,
           modelName,
-          image,
+          image ?? null,
           mediaType,
           question,
         );
