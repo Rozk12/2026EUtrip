@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|icon|apple-icon|manifest\\.webmanifest).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon|apple-icon|manifest\\.webmanifest|sw\\.js).*)",
   ],
 };
 

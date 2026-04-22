@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cinzel, Poiret_One, EB_Garamond } from "next/font/google";
+import SwRegister from "@/components/SwRegister";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -52,6 +53,7 @@ export default function RootLayout({
     >
       <body className="antialiased bg-[#0b1828] text-[#ecd9b0]">
         {children}
+        <SwRegister />
       </body>
     </html>
   );
