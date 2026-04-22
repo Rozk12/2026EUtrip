@@ -51,6 +51,10 @@ export default function SignIn() {
             type="text"
             autoComplete="username"
             autoCapitalize="none"
+            autoCorrect="off"
+            inputMode="text"
+            enterKeyHint="next"
+            autoFocus
             value={user}
             onChange={(e) => setUser(e.target.value)}
             required
@@ -65,6 +69,9 @@ export default function SignIn() {
           <input
             type="password"
             autoComplete="current-password"
+            autoCapitalize="none"
+            autoCorrect="off"
+            enterKeyHint="go"
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             required

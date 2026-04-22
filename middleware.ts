@@ -34,19 +34,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 1) cookie-based (preferred)
+  // cookie-based auth only; Basic Auth fallback removed so stale
+  // credentials cached by the PWA can't bypass the sign-in page
   const cookie = req.cookies.get("trip-auth")?.value;
   if (cookie) {
     const expected = await hmacHex(pass, user);
     if (cookie === expected) return NextResponse.next();
-  }
-
-  // 2) fall back to HTTP Basic Auth for older links
-  const header = req.headers.get("authorization");
-  if (header?.startsWith("Basic ")) {
-    const decoded = atob(header.slice(6));
-    const [u, p] = decoded.split(":");
-    if (u === user && p === pass) return NextResponse.next();
   }
 
   // Redirect HTML navigations to /signin; return 401 for API calls.
