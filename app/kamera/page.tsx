@@ -170,10 +170,13 @@ export default function KameraPage() {
     >
       <div className="mx-auto max-w-md">
         <header className="mb-5 text-center">
-          <div className="chevron-label">SPØRG GEMINI</div>
+          <div className="chevron-label">KAMMERTJENER</div>
           <h1 className="mt-1 font-deco text-3xl text-[var(--gold)]">
-            AI に聞く
+            Hr. Gemini
           </h1>
+          <p className="mt-1 text-[11px] italic text-[var(--cream-soft)]">
+            ご用命を承ります
+          </p>
         </header>
 
         {/* Tabs */}
