@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
 import { useTrip } from "@/components/TripContext";
 import { toRoman } from "@/lib/roman";
@@ -42,8 +42,11 @@ export default function DayTicket({
   onFocus,
 }: Props) {
   const trip = useTrip();
-  const markers = buildMarkersForDate(trip, date);
-  const route = dayRoute(trip, date);
+  const markers = useMemo(
+    () => buildMarkersForDate(trip, date),
+    [trip, date],
+  );
+  const route = useMemo(() => dayRoute(trip, date), [trip, date]);
   const { month, day } = shortDate(date);
   const color = cityColor(route ? route.to : city);
   const serial = `№ ${String(idx + 1).padStart(3, "0")} / ${String(total).padStart(3, "0")}`;
@@ -106,7 +109,11 @@ export default function DayTicket({
   return (
     <article
       className="relative flex h-[100dvh] w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto overscroll-contain px-4 pb-24 pt-14"
-      style={{ WebkitOverflowScrolling: "touch" }}
+      style={{
+        WebkitOverflowScrolling: "touch",
+        contentVisibility: "auto",
+        containIntrinsicSize: "100dvh 100vw",
+      }}
     >
       {/* ticket card */}
       <div className="ticket relative flex w-full max-w-md shrink-0 flex-col">

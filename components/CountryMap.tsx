@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { geoMercator, geoPath } from "d3-geo";
 import type { FeatureCollection, Feature } from "geojson";
 import dnkData from "@/data/geo/DNK.geo.json";
@@ -70,59 +71,69 @@ interface Props {
 }
 
 export default function CountryMap({ cityString, fromCity, toCity }: Props) {
-  const fromKey = cityKey(fromCity);
-  const toKey = cityKey(toCity);
-  const stayKey = cityKey(destinationCity(cityString));
+  const computed = useMemo(() => {
+    const fromKey = cityKey(fromCity);
+    const toKey = cityKey(toCity);
+    const stayKey = cityKey(destinationCity(cityString));
 
-  const endpointKeys = (fromKey && toKey ? [fromKey, toKey] : [stayKey]).filter(
-    (k): k is string => !!k,
-  );
-  if (endpointKeys.length === 0) return null;
+    const endpointKeys = (
+      fromKey && toKey ? [fromKey, toKey] : [stayKey]
+    ).filter((k): k is string => !!k);
+    if (endpointKeys.length === 0) return null;
 
-  const countrySet = new Set<CountryCode>();
-  for (const k of endpointKeys) {
-    const c = CITY_COUNTRY[k];
-    if (c) countrySet.add(c);
-  }
-  if (countrySet.size === 0) return null;
-  const countryList = Array.from(countrySet);
+    const countrySet = new Set<CountryCode>();
+    for (const k of endpointKeys) {
+      const c = CITY_COUNTRY[k];
+      if (c) countrySet.add(c);
+    }
+    if (countrySet.size === 0) return null;
+    const countryList = Array.from(countrySet);
 
-  // Build a combined FeatureCollection for fit-extent (countries + endpoint points)
-  const features: Feature[] = [];
-  for (const c of countryList) {
-    features.push(...GEO[c].features);
-  }
-  for (const k of endpointKeys) {
-    const p = CITY[k];
-    features.push({
-      type: "Feature",
-      geometry: { type: "Point", coordinates: [p.lng, p.lat] },
-      properties: {},
-    });
-  }
-  const combined: FeatureCollection = {
-    type: "FeatureCollection",
-    features,
-  };
-
-  const projection = geoMercator().fitExtent(
-    [
-      [PAD.L, PAD.T],
-      [W - PAD.R, H - PAD.B],
-    ],
-    combined as any,
-  );
-  const pathGen = geoPath(projection);
-
-  // Project endpoint pins
-  const pins = endpointKeys
-    .map((k) => {
+    const features: Feature[] = [];
+    for (const c of countryList) {
+      features.push(...GEO[c].features);
+    }
+    for (const k of endpointKeys) {
       const p = CITY[k];
-      const xy = projection([p.lng, p.lat]);
-      if (!xy) return null;
-      return { key: k, label: p.label, x: xy[0], y: xy[1] };
-    })
-    .filter(<T,>(v: T | null): v is T => v !== null);
+      features.push({
+        type: "Feature",
+        geometry: { type: "Point", coordinates: [p.lng, p.lat] },
+        properties: {},
+      });
+    }
+    const combined: FeatureCollection = {
+      type: "FeatureCollection",
+      features,
+    };
+
+    const projection = geoMercator().fitExtent(
+      [
+        [PAD.L, PAD.T],
+        [W - PAD.R, H - PAD.B],
+      ],
+      combined as any,
+    );
+    const pathGen = geoPath(projection);
+
+    const countryPaths = countryList.map((code) => ({
+      code,
+      d: pathGen(GEO[code] as any) ?? "",
+    }));
+
+    const pins = endpointKeys
+      .map((k) => {
+        const p = CITY[k];
+        const xy = projection([p.lng, p.lat]);
+        if (!xy) return null;
+        return { key: k, label: p.label, x: xy[0], y: xy[1] };
+      })
+      .filter((v): v is NonNullable<typeof v> => v !== null);
+
+    return { countryList, countryPaths, pins };
+  }, [cityString, fromCity, toCity]);
+
+  if (!computed) return null;
+  const { countryList, countryPaths, pins } = computed;
 
   // Decide label row
   const labelText =
@@ -197,10 +208,10 @@ export default function CountryMap({ cityString, fromCity, toCity }: Props) {
         {labelText}
       </text>
 
-      {countryList.map((code) => (
+      {countryPaths.map(({ code, d }) => (
         <path
           key={code}
-          d={pathGen(GEO[code] as any) ?? ""}
+          d={d}
           fill="var(--gold)"
           fillOpacity="0.18"
           stroke="var(--gold)"
