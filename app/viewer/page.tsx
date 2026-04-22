@@ -1,7 +1,17 @@
 "use client";
 
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
+
+const PdfView = dynamic(() => import("@/components/PdfView"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-full items-center justify-center font-title text-xs tracking-[0.3em] text-[var(--gold)]">
+      LOADING…
+    </div>
+  ),
+});
 
 function ViewerInner() {
   const params = useSearchParams();
@@ -49,11 +59,7 @@ function ViewerInner() {
         }}
       >
         {safeFile ? (
-          <iframe
-            src={safeFile}
-            className="h-full w-full border-0"
-            title={label || "document"}
-          />
+          <PdfView file={safeFile} />
         ) : (
           <div className="flex h-full items-center justify-center text-sm italic text-[var(--cream-soft)]">
             ファイルが指定されていません
