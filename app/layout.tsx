@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cinzel, Poiret_One, EB_Garamond } from "next/font/google";
 import "./globals.css";
 
@@ -27,6 +27,17 @@ const garamond = EB_Garamond({
 export const metadata: Metadata = {
   title: "Den Store Rejse · MMXXVI",
   description: "København · Prag · Wien · Salzburg",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Rejse 2026",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0b1828",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
