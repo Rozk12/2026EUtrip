@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { buildMarkersForDate, cityColor, typeIcon } from "@/lib/trip";
+import { buildMarkersForDate, cityColor, itemsById, typeIcon } from "@/lib/trip";
 import { useTrip } from "@/components/TripContext";
 import { toRoman } from "@/lib/roman";
 import PassportStamp from "@/components/PassportStamp";
 import CountryMap from "@/components/CountryMap";
+import EventDetails from "@/components/EventDetails";
 import {
   currentHHMM,
   dayRoute,
@@ -47,6 +48,8 @@ export default function DayTicket({
     [trip, date],
   );
   const route = useMemo(() => dayRoute(trip, date), [trip, date]);
+  const lookup = useMemo(() => itemsById(trip), [trip]);
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const { month, day } = shortDate(date);
   const color = cityColor(route ? route.to : city);
   const serial = `№ ${String(idx + 1).padStart(3, "0")} / ${String(total).padStart(3, "0")}`;
@@ -210,13 +213,18 @@ export default function DayTicket({
               {markers.map((m) => {
                 const passed =
                   isToday && m.time ? m.time < now : false;
+                const isExpanded = expandedKey === m.key;
+                const item = lookup[m.id];
                 return (
                   <li key={m.key}>
                     <button
                       className={`flex w-full items-start gap-3 rounded-sm px-3 py-2.5 text-left transition hover:bg-[rgba(212,168,75,0.08)] ${
                         passed ? "opacity-50" : ""
-                      }`}
-                      onClick={() => onFocus(m.key)}
+                      } ${isExpanded ? "bg-[rgba(212,168,75,0.06)]" : ""}`}
+                      onClick={() =>
+                        setExpandedKey(isExpanded ? null : m.key)
+                      }
+                      aria-expanded={isExpanded}
                     >
                       <div className="w-12 shrink-0 font-title text-[11px] tracking-wider text-[var(--cream-soft)]">
                         {m.time ?? "—"}
@@ -239,22 +247,23 @@ export default function DayTicket({
                             {m.sub}
                           </div>
                         )}
-                        {m.documents && m.documents.length > 0 && (
-                          <div className="mt-1 flex flex-wrap gap-1.5">
-                            {m.documents.map((doc, di) => (
-                              <a
-                                key={di}
-                                href={`/viewer?file=${encodeURIComponent(doc.url)}&label=${encodeURIComponent(doc.label)}`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="inline-flex items-center rounded-sm border border-[var(--gold)] px-2 py-0.5 text-[9px] font-title tracking-wider text-[var(--gold)] hover:bg-[rgba(232,197,114,0.12)]"
-                              >
-                                {doc.label}
-                              </a>
-                            ))}
-                          </div>
-                        )}
                       </div>
+                      <span
+                        className={`mt-1 text-[10px] text-[var(--cream-soft)] transition-transform ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                        aria-hidden
+                      >
+                        ▾
+                      </span>
                     </button>
+
+                    {isExpanded && item && (
+                      <EventDetails
+                        item={item}
+                        onShowOnMap={() => onFocus(m.key)}
+                      />
+                    )}
                   </li>
                 );
               })}

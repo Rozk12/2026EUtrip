@@ -109,6 +109,15 @@ export const defaultTrip = raw as TripData;
 
 export type AnyItem = Flight | Train | Hotel | TripEvent;
 
+export function itemsById(trip: TripData): Record<string, AnyItem> {
+  const out: Record<string, AnyItem> = {};
+  for (const f of trip.flights) out[f.id] = f;
+  for (const t of trip.trains) out[t.id] = t;
+  for (const h of trip.hotels) out[h.id] = h;
+  for (const e of trip.events) out[e.id] = e;
+  return out;
+}
+
 export const cityColor = (name: string): string => {
   const key = name.toLowerCase();
   if (key.includes("copenhagen")) return "#1e88e5";
