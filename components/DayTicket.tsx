@@ -108,11 +108,13 @@ export default function DayTicket({
 
   return (
     <article
-      className="relative flex h-[100dvh] w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto overscroll-contain px-4 pb-24 pt-14"
+      className="relative flex h-[100dvh] w-screen shrink-0 snap-center flex-col items-center justify-start overflow-y-auto overscroll-contain px-4"
       style={{
         WebkitOverflowScrolling: "touch",
         contentVisibility: "auto",
         containIntrinsicSize: "100dvh 100vw",
+        paddingTop: "calc(3.5rem + env(safe-area-inset-top, 0px))",
+        paddingBottom: "calc(6rem + env(safe-area-inset-bottom, 0px))",
       }}
     >
       {/* ticket card */}

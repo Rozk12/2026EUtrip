@@ -125,7 +125,13 @@ export default function KameraPage() {
   };
 
   return (
-    <main className="min-h-[100dvh] bg-[var(--midnight)] px-4 pb-24 pt-6 text-[var(--cream)]">
+    <main
+      className="min-h-[100dvh] bg-[var(--midnight)] px-4 text-[var(--cream)]"
+      style={{
+        paddingTop: "calc(1.5rem + env(safe-area-inset-top, 0px))",
+        paddingBottom: "calc(6rem + env(safe-area-inset-bottom, 0px))",
+      }}
+    >
       <div className="mx-auto max-w-md">
         <header className="mb-5 text-center">
           <div className="chevron-label">KAMERA · SPØRG</div>

@@ -105,7 +105,12 @@ export default function TripApp({ initialTrip }: Props) {
     <TripProvider value={trip}>
       <main className="relative h-[100dvh] w-screen overflow-hidden bg-[var(--midnight)]">
         {/* header */}
-        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4 pt-3">
+        <header
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4"
+          style={{
+            paddingTop: "calc(0.75rem + env(safe-area-inset-top, 0px))",
+          }}
+        >
           <button
             onClick={() => setMapOpen(true)}
             className="pointer-events-auto flex items-center gap-2 border border-[rgba(212,168,75,0.5)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 font-title text-[10px] tracking-[0.35em] text-[var(--gold)] shadow backdrop-blur transition hover:bg-[rgba(212,168,75,0.1)]"
@@ -160,7 +165,12 @@ export default function TripApp({ initialTrip }: Props) {
         </button>
 
         {/* progress dots */}
-        <div className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2">
+        <div
+          className="absolute left-1/2 z-10 -translate-x-1/2"
+          style={{
+            bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
+          }}
+        >
           <div className="flex items-center gap-1.5 rounded-full border border-[rgba(212,168,75,0.35)] bg-[rgba(11,24,40,0.85)] px-3 py-1.5 shadow backdrop-blur">
             {trip.itinerary.map((_, i) => (
               <button
@@ -207,7 +217,10 @@ export default function TripApp({ initialTrip }: Props) {
         <a
           href="/kamera"
           aria-label="カメラで質問"
-          className="absolute bottom-20 right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
+          className="absolute right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
+          style={{
+            bottom: "calc(5rem + env(safe-area-inset-bottom, 0px))",
+          }}
         >
           📷
         </a>
@@ -215,7 +228,10 @@ export default function TripApp({ initialTrip }: Props) {
         <a
           href="/saboten/game"
           aria-label="サボテン叩きゲーム"
-          className="absolute bottom-5 right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
+          className="absolute right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
+          style={{
+            bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))",
+          }}
         >
           🌵
         </a>

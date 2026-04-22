@@ -31,7 +31,13 @@ export default function SignIn() {
   };
 
   return (
-    <main className="flex min-h-[100dvh] items-center justify-center bg-[#0b1828] px-4 py-10 text-[#ecd9b0]">
+    <main
+      className="flex min-h-[100dvh] items-center justify-center bg-[#0b1828] px-4 text-[#ecd9b0]"
+      style={{
+        paddingTop: "calc(2.5rem + env(safe-area-inset-top, 0px))",
+        paddingBottom: "calc(2.5rem + env(safe-area-inset-bottom, 0px))",
+      }}
+    >
       <form
         onSubmit={submit}
         className="w-full max-w-sm space-y-5 rounded-2xl border border-[rgba(212,168,75,0.35)] bg-[#132438] p-6 shadow-2xl"

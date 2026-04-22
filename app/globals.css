@@ -27,6 +27,20 @@ body {
   font-family: var(--font-garamond), "Shippori Mincho B1", "Yu Mincho", serif;
 }
 
+/* iOS PWA safe-area utilities: push content below the notch/home indicator */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.top-safe {
+  top: env(safe-area-inset-top, 0px);
+}
+.mt-safe {
+  margin-top: env(safe-area-inset-top, 0px);
+}
+
 .leaflet-container {
   height: 100%;
   width: 100%;
