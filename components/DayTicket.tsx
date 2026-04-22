@@ -244,9 +244,7 @@ export default function DayTicket({
                             {m.documents.map((doc, di) => (
                               <a
                                 key={di}
-                                href={doc.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href={`/viewer?file=${encodeURIComponent(doc.url)}&label=${encodeURIComponent(doc.label)}`}
                                 onClick={(e) => e.stopPropagation()}
                                 className="inline-flex items-center rounded-sm border border-[var(--gold)] px-2 py-0.5 text-[9px] font-title tracking-wider text-[var(--gold)] hover:bg-[rgba(232,197,114,0.12)]"
                               >

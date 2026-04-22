@@ -157,9 +157,7 @@ export default function MapView({ selectedDate, focusedKey }: Props) {
                     {m.documents.map((d, di) => (
                       <a
                         key={di}
-                        href={d.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={`/viewer?file=${encodeURIComponent(d.url)}&label=${encodeURIComponent(d.label)}`}
                         className="text-xs font-medium text-blue-600 underline"
                       >
                         {d.label}
