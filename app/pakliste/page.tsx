@@ -117,6 +117,8 @@ export default function PaklistePage() {
     if (mounted) saveItems(items);
   }, [items, mounted]);
 
+  const [confirmReset, setConfirmReset] = useState(false);
+
   const toggle = (id: string) =>
     setItems((xs) =>
       xs.map((x) => (x.id === id ? { ...x, checked: !x.checked } : x)),
@@ -149,16 +151,11 @@ export default function PaklistePage() {
     setNewCount(1);
   };
 
-  const resetToPresets = () => {
-    if (
-      !window.confirm(
-        "リセットすると入力済みのチェックと自分で追加した項目が消えます。よろしいですか？",
-      )
-    )
-      return;
+  const doReset = () => {
     setItems(
       PRESET_ITEMS.map((p) => ({ ...p, id: makeId(), checked: false })),
     );
+    setConfirmReset(false);
   };
 
   const byCategory = useMemo(() => {
@@ -347,7 +344,7 @@ export default function PaklistePage() {
 
         <div className="mt-6 flex flex-col items-center gap-2">
           <button
-            onClick={resetToPresets}
+            onClick={() => setConfirmReset(true)}
             className="rounded-full border border-[rgba(212,168,75,0.3)] px-4 py-2 text-[11px] italic text-[var(--cream-soft)] hover:border-[var(--burgundy)] hover:text-[var(--burgundy)]"
           >
             プリセットに戻す
@@ -360,6 +357,42 @@ export default function PaklistePage() {
           </a>
         </div>
       </div>
+
+      {confirmReset && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-6"
+          onClick={() => setConfirmReset(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-[rgba(212,168,75,0.4)] bg-[var(--night)] p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="chevron-label mb-2">NULSTIL</div>
+            <h2 className="mb-2 font-deco text-xl text-[var(--gold)]">
+              プリセットに戻す
+            </h2>
+            <p className="mb-5 text-sm leading-relaxed text-[var(--cream)]">
+              現在のチェック・個数・自分で追加した項目は
+              <b className="text-[var(--burgundy)]">すべて消えます</b>
+              。よろしいですか？
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setConfirmReset(false)}
+                className="rounded-full border border-[rgba(212,168,75,0.4)] px-4 py-2 font-title text-[11px] tracking-[0.3em] text-[var(--cream-soft)]"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={doReset}
+                className="rounded-full bg-[var(--burgundy)] px-4 py-2 font-title text-[11px] tracking-[0.3em] text-white"
+              >
+                リセット
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
