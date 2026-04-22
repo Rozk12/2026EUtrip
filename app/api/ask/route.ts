@@ -22,13 +22,16 @@ async function callGemini(
     model: modelName,
     systemInstruction: SYSTEM_PROMPT,
   });
-  const parts: Array<{ text?: string; inlineData?: { data: string; mimeType: string } }> =
-    [];
+  const parts: Array<
+    { text: string } | { inlineData: { data: string; mimeType: string } }
+  > = [];
   if (image) {
     parts.push({ inlineData: { data: image, mimeType: mediaType } });
   }
   parts.push({ text: question });
-  const result = await model.generateContent(parts);
+  const result = await model.generateContent({
+    contents: [{ role: "user", parts: parts as any }],
+  });
   return result.response.text();
 }
 
