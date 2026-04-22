@@ -205,6 +205,14 @@ export default function TripApp({ initialTrip }: Props) {
         </div>
 
         <a
+          href="/kamera"
+          aria-label="カメラで質問"
+          className="absolute bottom-20 right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
+        >
+          📷
+        </a>
+
+        <a
           href="/saboten/game"
           aria-label="サボテン叩きゲーム"
           className="absolute bottom-5 right-4 z-[1000] flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--gold)] bg-[var(--midnight)] text-xl shadow-lg transition hover:scale-110 active:scale-95"
