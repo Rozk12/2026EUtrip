@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { saveEntry, makeThumb } from "@/lib/journal";
 
 interface Preset {
   label: string;
@@ -85,6 +86,7 @@ export default function KameraPage() {
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = (file: File) => {
@@ -131,6 +133,7 @@ export default function KameraPage() {
     setLoading(true);
     setAnswer(null);
     setError(null);
+    setSaved(false);
     try {
       const res = await fetch("/api/ask", {
         method: "POST",
@@ -156,6 +159,7 @@ export default function KameraPage() {
     setImageBase64(null);
     setAnswer(null);
     setError(null);
+    setSaved(false);
     setQuestion("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -365,6 +369,24 @@ export default function KameraPage() {
             </div>
             <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--cream)]">
               {answer}
+            </div>
+            <div className="mt-4 flex justify-end">
+              {saved ? (
+                <span className="font-title text-[10px] tracking-[0.3em] text-[var(--gold)]">
+                  ✓ しおりに追加しました
+                </span>
+              ) : (
+                <button
+                  onClick={async () => {
+                    const thumb = preview ? await makeThumb(preview) : undefined;
+                    saveEntry({ mode, imageThumb: thumb ?? undefined, question, answer });
+                    setSaved(true);
+                  }}
+                  className="border border-[var(--gold)] px-4 py-2 font-title text-[10px] tracking-[0.3em] text-[var(--gold)] transition hover:bg-[rgba(212,168,75,0.1)] active:scale-95"
+                >
+                  📖 しおりに追加
+                </button>
+              )}
             </div>
           </article>
         )}
