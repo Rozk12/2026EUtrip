@@ -6,6 +6,7 @@ import { useTrip } from "@/components/TripContext";
 import { toRoman } from "@/lib/roman";
 import PassportStamp from "@/components/PassportStamp";
 import CountryMap from "@/components/CountryMap";
+import CityGuide from "@/components/CityGuide";
 import EventDetails from "@/components/EventDetails";
 import {
   currentHHMM,
@@ -50,6 +51,8 @@ export default function DayTicket({
   const route = useMemo(() => dayRoute(trip, date), [trip, date]);
   const lookup = useMemo(() => itemsById(trip), [trip]);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const guideCity = route ? route.to : city;
   const { month, day } = shortDate(date);
   const color = cityColor(route ? route.to : city);
   const serial = `№ ${String(idx + 1).padStart(3, "0")} / ${String(total).padStart(3, "0")}`;
@@ -71,6 +74,10 @@ export default function DayTicket({
   const untilMin = upcoming ? minutesUntil(upcoming.time, now) : null;
 
   // Stamp press: play once per date in normal mode, every swipe in debug mode.
+  useEffect(() => {
+    if (!isCurrent) setGuideOpen(false);
+  }, [isCurrent]);
+
   const [stampTick, setStampTick] = useState(0);
   const [stampAnimate, setStampAnimate] = useState(false);
   const wasCurrentRef = useRef(false);
@@ -333,8 +340,12 @@ export default function DayTicket({
         )}
       </div>
 
-      {/* country silhouette in the empty space below the ticket */}
-      <div className="mt-4 w-full max-w-md shrink-0 opacity-90">
+      {/* country silhouette — tap to open city guide */}
+      <button
+        onClick={() => setGuideOpen(true)}
+        className="group mt-4 w-full max-w-md shrink-0 text-left opacity-90 transition hover:opacity-100"
+        aria-label={`${guideCity}のガイドを見る`}
+      >
         <div className="mb-1 flex items-center justify-between px-1">
           <span className="chevron-label">LAND</span>
           <span className="font-title text-[8px] tracking-[0.3em] text-[var(--cream-soft)]">
@@ -342,13 +353,22 @@ export default function DayTicket({
               ? `${route.from.toUpperCase()} → ${route.to.toUpperCase()}`
               : city.toUpperCase()}
           </span>
+          <span className="font-title text-[7px] tracking-[0.2em] text-[var(--gold)] opacity-50 transition group-hover:opacity-100">
+            ガイドを見る ▸
+          </span>
         </div>
         <CountryMap
           cityString={city}
           fromCity={route?.from}
           toCity={route?.to}
         />
-      </div>
+      </button>
+
+      <CityGuide
+        city={guideCity}
+        isOpen={guideOpen}
+        onClose={() => setGuideOpen(false)}
+      />
     </article>
   );
 }
