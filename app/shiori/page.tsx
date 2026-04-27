@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   loadJournal,
   deleteEntry,
   clearJournal,
   formatSavedAt,
+  saveEntry,
+  makeThumb,
   type JournalEntry,
 } from "@/lib/journal";
 
@@ -14,20 +16,90 @@ export default function ShioriPage() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
 
+  // Ask-from-journal state
+  const [askingId, setAskingId] = useState<string | null>(null);
+  const [askQuestion, setAskQuestion] = useState("");
+  const [askLoading, setAskLoading] = useState(false);
+  const [askAnswer, setAskAnswer] = useState<string | null>(null);
+  const [askError, setAskError] = useState<string | null>(null);
+  const [askSaved, setAskSaved] = useState(false);
+  const askInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     setEntries(loadJournal());
   }, []);
+
+  const openAsk = (id: string) => {
+    setAskingId(id);
+    setAskQuestion("");
+    setAskAnswer(null);
+    setAskError(null);
+    setAskSaved(false);
+    setTimeout(() => askInputRef.current?.focus(), 50);
+  };
+
+  const closeAsk = () => {
+    setAskingId(null);
+    setAskAnswer(null);
+    setAskError(null);
+  };
+
+  const handleAsk = async (entry: JournalEntry) => {
+    if (!askQuestion.trim()) return;
+    setAskLoading(true);
+    setAskAnswer(null);
+    setAskError(null);
+    setAskSaved(false);
+    try {
+      const imageBase64 = entry.imageThumb
+        ? entry.imageThumb.split(",")[1]
+        : null;
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image: imageBase64,
+          mediaType: "image/jpeg",
+          question: askQuestion.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "failed");
+      setAskAnswer(data.answer ?? "");
+    } catch (e) {
+      setAskError((e as Error).message);
+    } finally {
+      setAskLoading(false);
+    }
+  };
+
+  const handleSaveAsk = async (entry: JournalEntry) => {
+    if (!askAnswer) return;
+    const thumb = entry.imageThumb
+      ? await makeThumb(entry.imageThumb)
+      : undefined;
+    const newEntry = saveEntry({
+      mode: entry.imageThumb ? "camera" : "text",
+      imageThumb: thumb,
+      question: askQuestion.trim(),
+      answer: askAnswer,
+    });
+    setEntries((prev) => [newEntry, ...prev]);
+    setAskSaved(true);
+  };
 
   const handleDelete = (id: string) => {
     deleteEntry(id);
     setEntries((prev) => prev.filter((e) => e.id !== id));
     if (expanded === id) setExpanded(null);
+    if (askingId === id) closeAsk();
   };
 
   const handleClear = () => {
     clearJournal();
     setEntries([]);
     setConfirmClear(false);
+    closeAsk();
   };
 
   return (
@@ -68,6 +140,8 @@ export default function ShioriPage() {
         <div className="space-y-4">
           {entries.map((entry, i) => {
             const isExpanded = expanded === entry.id;
+            const isAsking = askingId === entry.id;
+
             return (
               <article
                 key={entry.id}
@@ -75,10 +149,12 @@ export default function ShioriPage() {
               >
                 {/* Entry header */}
                 <button
-                  onClick={() => setExpanded(isExpanded ? null : entry.id)}
+                  onClick={() => {
+                    setExpanded(isExpanded ? null : entry.id);
+                    if (isAsking) closeAsk();
+                  }}
                   className="flex w-full items-start gap-3 p-4 text-left transition hover:bg-[rgba(212,168,75,0.05)]"
                 >
-                  {/* Thumbnail */}
                   {entry.imageThumb ? (
                     <img
                       src={entry.imageThumb}
@@ -90,8 +166,6 @@ export default function ShioriPage() {
                       💬
                     </div>
                   )}
-
-                  {/* Meta */}
                   <div className="min-w-0 flex-1">
                     <div className="font-title text-[9px] tracking-[0.3em] text-[var(--gold)] opacity-70">
                       {formatSavedAt(entry.savedAt)}
@@ -100,7 +174,6 @@ export default function ShioriPage() {
                       {entry.question}
                     </div>
                   </div>
-
                   <span
                     className={`mt-1 shrink-0 text-[10px] text-[var(--cream-soft)] transition-transform ${
                       isExpanded ? "rotate-180" : ""
@@ -132,7 +205,99 @@ export default function ShioriPage() {
                     <p className="whitespace-pre-wrap text-[12px] leading-relaxed text-[var(--cream)]">
                       {entry.answer}
                     </p>
-                    <div className="mt-4 flex justify-end">
+
+                    {/* Ask again section */}
+                    <div className="mt-4 border-t border-dashed border-[rgba(212,168,75,0.2)] pt-3">
+                      {!isAsking ? (
+                        <button
+                          onClick={() => openAsk(entry.id)}
+                          className="w-full border border-[rgba(212,168,75,0.4)] py-2 font-title text-[10px] tracking-[0.3em] text-[var(--gold)] transition hover:bg-[rgba(212,168,75,0.08)]"
+                        >
+                          🧞 この写真についてもっと聞く
+                        </button>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="font-title text-[9px] tracking-[0.3em] text-[var(--gold)]">
+                            もう一度 Gemini に聞く
+                          </div>
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              handleAsk(entry);
+                            }}
+                            className="flex gap-2"
+                          >
+                            <input
+                              ref={askInputRef}
+                              value={askQuestion}
+                              onChange={(e) => setAskQuestion(e.target.value)}
+                              placeholder="例: 何世紀の建物？"
+                              className="flex-1 rounded-full border border-[rgba(212,168,75,0.4)] bg-[var(--midnight)] px-3 py-2 text-[12px] text-[var(--cream)] placeholder:text-[var(--cream-soft)] focus:border-[var(--gold)] focus:outline-none"
+                              disabled={askLoading}
+                            />
+                            <button
+                              type="submit"
+                              disabled={askLoading || !askQuestion.trim()}
+                              className="rounded-full bg-[var(--gold)] px-4 py-2 font-title text-[10px] tracking-[0.2em] text-[var(--midnight)] disabled:opacity-40"
+                            >
+                              聞く
+                            </button>
+                          </form>
+
+                          {askLoading && (
+                            <div className="flex items-center gap-2 py-2">
+                              <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--gold)] border-t-transparent" />
+                              <span className="font-title text-[10px] tracking-[0.3em] text-[var(--gold)]">
+                                ANALYZING…
+                              </span>
+                            </div>
+                          )}
+
+                          {askError && (
+                            <p className="text-[11px] text-red-400">{askError}</p>
+                          )}
+
+                          {askAnswer && (
+                            <div className="rounded bg-[var(--midnight)] p-3">
+                              <p className="whitespace-pre-wrap text-[12px] leading-relaxed text-[var(--cream)]">
+                                {askAnswer}
+                              </p>
+                              <div className="mt-3 flex items-center justify-between">
+                                <button
+                                  onClick={closeAsk}
+                                  className="font-title text-[9px] tracking-[0.2em] text-[var(--cream-soft)] underline opacity-60"
+                                >
+                                  閉じる
+                                </button>
+                                {askSaved ? (
+                                  <span className="font-title text-[9px] tracking-[0.2em] text-[var(--gold)]">
+                                    ✓ 保存しました
+                                  </span>
+                                ) : (
+                                  <button
+                                    onClick={() => handleSaveAsk(entry)}
+                                    className="border border-[var(--gold)] px-3 py-1 font-title text-[9px] tracking-[0.2em] text-[var(--gold)] transition hover:bg-[rgba(212,168,75,0.1)]"
+                                  >
+                                    📖 しおりに追加
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {!askAnswer && !askLoading && (
+                            <button
+                              onClick={closeAsk}
+                              className="font-title text-[9px] tracking-[0.2em] text-[var(--cream-soft)] underline opacity-60"
+                            >
+                              キャンセル
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-3 flex justify-end">
                       <button
                         onClick={() => handleDelete(entry.id)}
                         className="font-title text-[9px] tracking-[0.3em] text-[var(--cream-soft)] underline opacity-60 hover:opacity-100"
